@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\Albert_Lu\Desktop\Lotus\Software\lotus\Project\settings\lotus.Debug.general.xcl" --backend -f "C:\Users\Albert_Lu\Desktop\Lotus\Software\lotus\Project\settings\lotus.Debug.driver.xcl" 
+"D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\settings\lotus.Debug.general.xcl" --backend -f "E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\settings\lotus.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\Albert_Lu\Desktop\Lotus\Software\lotus\Project\settings\lotus.Debug.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Albert_Lu\Desktop\Lotus\Software\lotus\Project\settings\lotus.Debug.driver.xcl" 
+"D:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\settings\lotus.Debug.general.xcl" "--debug_file=%~1" --backend -f "E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\settings\lotus.Debug.driver.xcl" 
 
 @echo off 
 :end
