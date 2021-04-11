@@ -33,6 +33,8 @@ void MMC_SendCMD(u8 CMD ,u8 feedback , u16 dat);
 
 void MMC_Play(void);
 void MMC_Pause(void);
+void MMC_Voice2middle(void);
+void MMC_Play_Num_spec(u16 playlist_num);
 
 
 #endif // ifndef __MP3_MODULE_CONTROL__

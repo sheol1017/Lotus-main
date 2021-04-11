@@ -49,7 +49,7 @@
         <MultiCoreRunAll>1</MultiCoreRunAll>
     </Simulator>
     <DebugChecksum>
-        <Checksum>2512986507</Checksum>
+        <Checksum>2797587927</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -57,11 +57,18 @@
     <RecentFlashDownload>
         <Path>C:\Users\Albert_Lu\Desktop\Lotus\Software\lotus\Project\Debug\Exe\lotus.hex</Path>
     </RecentFlashDownload>
+    <Disassembly>
+        <MixedMode>1</MixedMode>
+    </Disassembly>
     <DataSample>
         <LogEnabled>0</LogEnabled>
         <GraphEnabled>0</GraphEnabled>
         <ShowTimeLog>1</ShowTimeLog>
     </DataSample>
+    <Breakpoints>
+        <Bp0>_ "STD_CODE" "{$PROJ_DIR$\..\Users\uart.h}.4.19" 0 0 0 0 "" 0 ""</Bp0>
+        <Count>1</Count>
+    </Breakpoints>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -71,10 +78,6 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
-    <Breakpoints>
-        <Bp0>_ "STD_CODE" "{$PROJ_DIR$\..\Users\uart.h}.4.19" 1 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
-    </Breakpoints>
     <Aliases>
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>

@@ -125,38 +125,45 @@ void main(void)
 
     if (TimeBase_Get1sSystemTimeDelta())
     {
-        MMC_Play();
+      static bool bplayed;
+
+      if(!bplayed) 
+      {
+        bplayed = TRUE;
+        MMC_Play_Num_spec(0001u);
+        MMC_Voice2middle();
+        }
     }
 
     if (ucTestCounter == 2)
     {
         // RGB_Wave(COLOR_LIGHTPINK,5,50000);
-        RGB_Refresh(COLOR_WHITE,5);
+        RGB_Refresh(COLOR_WHITE,LED_Num);
         ucTestCounter++;
     }
     else if (ucTestCounter == 5)
     {
-        RGB_Refresh(COLOR_GREEN,5);
+        RGB_Refresh(COLOR_GREEN,LED_Num);
         ucTestCounter++;
     }
     else if (ucTestCounter == 8)
     {
-        RGB_Refresh(COLOR_BLUE,5);
+        RGB_Refresh(COLOR_BLUE,LED_Num);
         ucTestCounter++;
     }
     else if (ucTestCounter == 11)
     {
-        RGB_Refresh(COLOR_RED,5);
+        RGB_Refresh(COLOR_RED,LED_Num);
         ucTestCounter++;
     }
     else if (ucTestCounter == 14)
     {
-        RGB_Refresh(COLOR_GOLD,5);
+        RGB_Refresh(COLOR_GOLD,LED_Num);
         ucTestCounter++;
     }
     else if (ucTestCounter == 17)
     {
-        RGB_Refresh(COLOR_PURPLE,5);
+        RGB_Refresh(COLOR_PURPLE,LED_Num);
         ucTestCounter = 0;
     }
     

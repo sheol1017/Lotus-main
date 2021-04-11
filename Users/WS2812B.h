@@ -4,7 +4,7 @@
 // #include "fy_includes.h"
 #include "stm8s.h"
  
- 
+#define LED_Num 3 
 /*ÑÕÉ«ºê¶¨Òå*/								/*R G B*/
 #define	COLOR_LIGHTPINK						0xFFB6C1	//	Ç³·Ûºì
 #define	COLOR_PINK							0xFFC0CB	//	·Ûºì
