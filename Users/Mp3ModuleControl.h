@@ -21,7 +21,7 @@
 #define CMD_VOLUMN_UP       0x04    // volumn up
 #define CMD_VOLUMN_DOWN     0x05    // volumn down
 #define CMD_SET_VOLUMN      0x06    // set volumn, Parameter: 0-30
-
+#define CMD_SINGLE_CYCLING  0x19    // set volumn, Parameter: 0-30
 
 
 
@@ -35,6 +35,8 @@ void MMC_Play(void);
 void MMC_Pause(void);
 void MMC_SET_VOLUMN_Mid(void);
 void MMC_SELECT_SONG(u16 playlist_num);
+void MMC_SET_SINGLE_CYCLING(void);
+void MMC_Close_SINGLE_CYCLING(void);
 
 
 #endif // ifndef __MP3_MODULE_CONTROL__

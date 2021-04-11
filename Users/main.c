@@ -38,6 +38,7 @@
 /* Private variables ---------------------------------------------------------*/
 uint16_t Conversion_Value = 0;
 static u8 ucTestCounter;
+static bool bplayed;
 // enum errorcode error = NOERROR;
 /* Private function prototypes -----------------------------------------------*/
 // static void ADC_Config(void);
@@ -68,6 +69,7 @@ static void CLK_Config(void);
 ********************************************************************************/
 static void GPIO_Config()
 {
+  GPIO_Init(GPIOD, (GPIO_Pin_TypeDef)GPIO_PIN_2, GPIO_MODE_OUT_PP_HIGH_FAST);//debug
 }
 
 /********************************************************************************
@@ -96,14 +98,14 @@ void main(void)
   CLK_Config();
 
   /* Watchdog Init -------------------------------------------*/
-  //IWDG_Initializes();
+  // IWDG_Initializes();
 
   /* GPIO configuration ------------------------------------------*/
   GPIO_Config();
 
   /* TimeBase Init -----------------------------------------------*/
   TimeBase_Init();
-  
+
   /* Mp3 module control init ------------------------------------*/
   MMC_Init();
 
@@ -116,61 +118,63 @@ void main(void)
   while (1)
   {
 
+    // IWDG_ReloadCounter(); //喂狗(理论小于4ms内喂狗都不会复位，由于HSI有偏差，我们设定在xxxms喂狗一次)
+
     TimeBase_HandleTimeBaseCouter(); // Timebase reset
 
     if (TimeBase_Get1sSystemTimeDelta())
     {
-        ucTestCounter += TimeBase_Get1sSystemTimeDelta();
+      ucTestCounter += TimeBase_Get1sSystemTimeDelta();
     }
 
     if (TimeBase_Get1sSystemTimeDelta())
     {
-      static bool bplayed;
 
-      if(!bplayed) 
-      {
-        bplayed = TRUE;
-        MMC_SELECT_SONG(0001u);
-        MMC_SET_VOLUMN_Mid();
-        }
     }
 
     if (ucTestCounter == 2)
     {
-        // RGB_Wave(COLOR_LIGHTPINK,5,50000);
-        RGB_Refresh(COLOR_WHITE,LED_Num);
-        ucTestCounter++;
+      // RGB_Wave(COLOR_LIGHTPINK,5,50000);
+      RGB_Refresh(COLOR_WHITE, LED_Num);
+      ucTestCounter++;
+
+            
+
+      if (!bplayed)
+      {
+        bplayed = TRUE;
+        MMC_SELECT_SONG(0001u);
+        MMC_SET_VOLUMN_Mid();
+        MMC_SET_SINGLE_CYCLING();
+      }
     }
     else if (ucTestCounter == 5)
     {
-        RGB_Refresh(COLOR_GREEN,LED_Num);
-        ucTestCounter++;
+      RGB_Refresh(COLOR_GREEN, LED_Num);
+      ucTestCounter++;
     }
     else if (ucTestCounter == 8)
     {
-        RGB_Refresh(COLOR_BLUE,LED_Num);
-        ucTestCounter++;
+      RGB_Refresh(COLOR_BLUE, LED_Num);
+      ucTestCounter++;
     }
     else if (ucTestCounter == 11)
     {
-        RGB_Refresh(COLOR_RED,LED_Num);
-        ucTestCounter++;
+      RGB_Refresh(COLOR_RED, LED_Num);
+      ucTestCounter++;
     }
     else if (ucTestCounter == 14)
     {
-        RGB_Refresh(COLOR_GOLD,LED_Num);
-        ucTestCounter++;
+      RGB_Refresh(COLOR_GOLD, LED_Num);
+      ucTestCounter++;
     }
     else if (ucTestCounter == 17)
     {
-        RGB_Refresh(COLOR_PURPLE,LED_Num);
-        ucTestCounter = 0;
+      RGB_Refresh(COLOR_PURPLE, LED_Num);
+      ucTestCounter = 0;
     }
-    
-    
   }
 }
-
 
 #ifdef USE_FULL_ASSERT
 

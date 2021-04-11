@@ -17,8 +17,8 @@
 
 /** Private define ------------------------------------------------------------*/
 
-#define START_BYTE  0x7E
-#define END_BYTE    0xEF
+#define START_BYTE 0x7E
+#define END_BYTE 0xEF
 
 /** Private variables ---------------------------------------------------------*/
 
@@ -28,9 +28,8 @@ static u8 ucSendBuff[10];
 
 /** Private function prototypes -----------------------------------------------*/
 
-static void MMC_DoSum( u8 *Str, u8 len);
+static void MMC_DoSum(u8 *Str, u8 len);
 static void MMC_SendData(u8 ucLen);
-
 
 /** Private functions ---------------------------------------------------------*/
 
@@ -45,24 +44,28 @@ static void MMC_DoSum(u8 *Str, u8 len)
 {
     u16 xorsum = 0;
     u8 i;
-    for(i=1; i<len+1; i++)
+    for (i = 1; i < len + 1; i++)
     {
-        xorsum = xorsum + Str[i];   
+        xorsum = xorsum + Str[i];
         // Str = Str + i;
         // xorsum = xorsum + *Str;
     }
-    xorsum = 0 -xorsum;
-    *(Str+i) = (u8)(xorsum >>8);
-    *(Str+i+1) = (u8)(xorsum & 0x00ff);
+    xorsum = 0 - xorsum;
+    *(Str + i) = (u8)(xorsum >> 8);
+    *(Str + i + 1) = (u8)(xorsum & 0x00ff);
 }
 
 static void MMC_SendData(u8 ucLen)
 {
     u8 i;
-    for(i=0;i<ucLen;i++)
+    for (i = 0; i < ucLen; i++)
     {
         Uart_SendData(ucSendBuff[i]);
-        while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET);
+        while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+        {
+            GPIO_WriteLow(GPIOD, GPIO_PIN_2);
+            GPIO_WriteHigh(GPIOD, GPIO_PIN_2);
+        }
     }
 }
 
@@ -80,14 +83,15 @@ void MMC_Init(void)
     // No Parity
     // sync mode disbled
     // Rx and Tx are enabled
-    Uart_ParameterConfig(9600,UART1_WORDLENGTH_8D,UART1_STOPBITS_1,
-                            UART1_PARITY_NO,UART1_SYNCMODE_CLOCK_DISABLE,
-                            UART1_MODE_TXRX_ENABLE);
+    Uart_ParameterConfig(9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1,
+                         UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE,
+                         UART1_MODE_TXRX_ENABLE);
 
     // disable uart interrupt
     // UART_InterruptConfig(UART1_IT_TXE,DISABLE);
-    UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
-
+    // UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
+    UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
+    UART1_ITConfig(UART1_IT_TXE, DISABLE);
     // Enable uart
     Uart_Enable(ENABLE);
 
@@ -97,18 +101,21 @@ void MMC_Init(void)
     ucSendBuff[9] = END_BYTE;
 
     // GPIO init
-    // PD5 UART TX 
-    GPIO_Init(GPIOD , GPIO_PIN_5 , GPIO_MODE_OUT_PP_HIGH_FAST); 
+    // PD5 UART TX
+    GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
     // PD6 UART RX
-    GPIO_Init(GPIOD , GPIO_PIN_6 , GPIO_MODE_IN_PU_NO_IT); 
+    GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 }
 
 void Uart_ReadByte_RX_IRQ(void)
 {
-    //
+    // //
+    // GPIO_WriteLow(GPIOD, GPIO_PIN_2);
+    // GPIO_WriteHigh(GPIOD, GPIO_PIN_2);
+    // UART1_ClearITPendingBit(UART1_IT_RXNE);
 }
 
-void MMC_SendCMD(u8 CMD ,u8 feedback , u16 dat)
+void MMC_SendCMD(u8 CMD, u8 feedback, u16 dat)
 {
     ucSendBuff[0] = START_BYTE;     // set start byte
     ucSendBuff[1] = 0xff;           // 保留字节
@@ -118,30 +125,40 @@ void MMC_SendCMD(u8 CMD ,u8 feedback , u16 dat)
     ucSendBuff[5] = (u8)(dat >> 8); //datah
     ucSendBuff[6] = (u8)(dat);      //datal
 
-    MMC_DoSum(ucSendBuff,6);        //校验
+    MMC_DoSum(ucSendBuff, 6); //校验
 
-    ucSendBuff[9] = END_BYTE;       // set end byte
+    ucSendBuff[9] = END_BYTE; // set end byte
 
     // SendCmd(8); //发送此帧数据
-    MMC_SendData(10);                // 发送此帧数据
+    MMC_SendData(10); // 发送此帧数据
 }
 
 void MMC_Play(void)
 {
-    MMC_SendCMD(0x0D,0,0);
+    MMC_SendCMD(0x0D, 0, 0);
 }
 
 void MMC_Pause(void)
 {
-    MMC_SendCMD(0x0E,0,0);
+    MMC_SendCMD(0x0E, 0, 0);
 }
 
 void MMC_SET_VOLUMN_Mid(void)
 {
-    MMC_SendCMD(CMD_SET_VOLUMN,0,10);
+    MMC_SendCMD(CMD_SET_VOLUMN, 0, 10);
 }
 
 void MMC_SELECT_SONG(u16 playlist_num)
 {
-    MMC_SendCMD(CMD_SELECT_SONG,0,playlist_num);
+    MMC_SendCMD(CMD_SELECT_SONG, 0, playlist_num);
+}
+
+void MMC_SET_SINGLE_CYCLING(void)
+{
+    MMC_SendCMD(CMD_SINGLE_CYCLING, 0, 1);
+}
+
+void MMC_Close_SINGLE_CYCLING(void)
+{
+    MMC_SendCMD(CMD_SINGLE_CYCLING, 0, 0);
 }

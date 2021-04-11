@@ -49,7 +49,7 @@
         <MultiCoreRunAll>1</MultiCoreRunAll>
     </Simulator>
     <DebugChecksum>
-        <Checksum>2973226985</Checksum>
+        <Checksum>1295276863</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -67,7 +67,8 @@
     </DataSample>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\..\Users\uart.h}.4.19" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Users\main.c}.1.1" 0 0 0 0 "" 0 ""</Bp1>
+        <Count>2</Count>
     </Breakpoints>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>

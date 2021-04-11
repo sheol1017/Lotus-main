@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>2</fileVersion>
-    <fileChecksum>3160989768</fileChecksum>
+    <fileChecksum>3161717888</fileChecksum>
     <configuration>
         <name>Debug</name>
         <outputs>
@@ -68,6 +68,13 @@
             <file>$PROJ_DIR$\Debug\Obj\stm8s_it.o</file>
             <file>$PROJ_DIR$\Debug\Obj\lotus.pbd</file>
             <file>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\inc\stm8s_uart1.h</file>
+            <file>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_iwdg.c</file>
+            <file>$PROJ_DIR$\..\Users\driver\iwdg.h</file>
+            <file>$PROJ_DIR$\..\Users\driver\iwdg.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\iwdg.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\stm8s_iwdg.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\stm8s_iwdg.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\iwdg.pbi</file>
         </outputs>
         <file>
             <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_clk.c</name>
@@ -143,7 +150,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 43 12 21 7 55 62 46 51 39 58 53 47 13 40 45 49 15 1 26 59 35 50 16</file>
+                    <file> 35 15 26 46 51 45 49 1 59 50 16 13 40 12 7 39 21 58 55 53 43 47 62</file>
                 </tool>
             </inputs>
         </file>
@@ -258,7 +265,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 59 49 16 19 45 1 50 46 15 26 35 51 12 7 39 21 58 55 53 43 47 62 5</file>
+                    <file> 1 19 45 50 49 59 16 46 15 26 35 51 12 7 39 21 58 55 53 43 47 62 5</file>
                 </tool>
             </inputs>
         </file>
@@ -323,7 +330,53 @@
             <inputs>
                 <tool>
                     <name>ILINK</name>
-                    <file> 37 24 57 9 33 60 4 2 44 42 30 3 36</file>
+                    <file> 37 66 24 57 9 33 60 67 4 2 44 42 30 3 36</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_iwdg.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 67</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 68</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 59 46 12 7 49 39 15 21 1 58 26 55 53 35 43 50 47 62 16 45</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 43 12 21 7 55 62 46 39 58 53 47 45 49 15 1 26 59 35 50 16</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\driver\iwdg.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 66</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 69</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 64 46 12 7 49 39 15 21 1 58 26 55 59 53 35 43 50 47 62 16 45</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 53 46 39 58 47 59 12 7 21 55 43 62 45 49 15 1 26 35 50 16 64</file>
                 </tool>
             </inputs>
         </file>

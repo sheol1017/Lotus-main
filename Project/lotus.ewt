@@ -2098,6 +2098,15 @@
         </settings>
     </configuration>
     <group>
+        <name>driver</name>
+        <file>
+            <name>$PROJ_DIR$\..\Users\driver\iwdg.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\driver\iwdg.h</name>
+        </file>
+    </group>
+    <group>
         <name>stm8s_driver</name>
         <group>
             <name>src</name>
@@ -2106,6 +2115,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_gpio.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_iwdg.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_tim4.c</name>
