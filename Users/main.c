@@ -130,8 +130,8 @@ void main(void)
       if(!bplayed) 
       {
         bplayed = TRUE;
-        MMC_Play_Num_spec(0001u);
-        MMC_Voice2middle();
+        MMC_SELECT_SONG(0001u);
+        MMC_SET_VOLUMN_Mid();
         }
     }
 

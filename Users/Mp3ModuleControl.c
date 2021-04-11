@@ -136,12 +136,12 @@ void MMC_Pause(void)
     MMC_SendCMD(0x0E,0,0);
 }
 
-void MMC_Voice2middle(void)
+void MMC_SET_VOLUMN_Mid(void)
 {
-    MMC_SendCMD(0x06,0,10);
+    MMC_SendCMD(CMD_SET_VOLUMN,0,10);
 }
 
-void MMC_Play_Num_spec(u16 playlist_num)
+void MMC_SELECT_SONG(u16 playlist_num)
 {
-    MMC_SendCMD(0x12,0,playlist_num);
+    MMC_SendCMD(CMD_SELECT_SONG,0,playlist_num);
 }

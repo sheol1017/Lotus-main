@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V3.10.1.201 for STM8                     11/Apr/2021  16:17:23
+# IAR ELF Linker V3.10.1.201 for STM8                     11/Apr/2021  16:49:44
 # Copyright 2010-2017 IAR Systems AB.
 #
 #    Output file  =  
@@ -8,7 +8,7 @@
 #    Map file     =  
 #        E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\Debug\List\lotus.map
 #    Command line =  
-#        -f C:\Users\sheol\AppData\Local\Temp\EWC03B.tmp
+#        -f C:\Users\sheol\AppData\Local\Temp\EW60EF.tmp
 #        (E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\Debug\Obj\main.o
 #        E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\Debug\Obj\Mp3ModuleControl.o
 #        E:\01_WorkSpace\software\VSCODE\Lotus-main\Lotus-main\Project\Debug\Obj\stm8s_clk.o
@@ -367,10 +367,10 @@ INTVEC$$Base            0x008000          --   Gb  - Linker created -
 INTVEC$$Limit           0x008080          --   Gb  - Linker created -
 MMC_DoSum               0x00920e   0x50  Code  Lc  Mp3ModuleControl.o [1]
 MMC_Init                0x008d88   0x4e  Code  Gb  Mp3ModuleControl.o [1]
-MMC_Play_Num_spec       0x008e10    0x8  Code  Gb  Mp3ModuleControl.o [1]
+MMC_SELECT_SONG         0x008e10    0x8  Code  Gb  Mp3ModuleControl.o [1]
+MMC_SET_VOLUMN_Mid      0x008e05    0xb  Code  Gb  Mp3ModuleControl.o [1]
 MMC_SendCMD             0x008dd6   0x2f  Code  Gb  Mp3ModuleControl.o [1]
 MMC_SendData            0x008d5c   0x2c  Code  Lc  Mp3ModuleControl.o [1]
-MMC_Voice2middle        0x008e05    0xb  Code  Gb  Mp3ModuleControl.o [1]
 RGB_Refresh             0x009427   0x2a  Code  Gb  WS2812B.o [1]
 Region$$Table$$Base     0x0094e4          --   Gb  - Linker created -
 Region$$Table$$Limit    0x0094ed          --   Gb  - Linker created -
