@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "config.h": "c",
+        "beep.h": "c",
+        "display.h": "c",
+        "timebase.h": "c",
+        "iwdg.h": "c",
+        "settingcontrol.h": "c",
+        "eeprom.h": "c",
+        "error.h": "c",
+        "i2c_function.h": "c",
+        "global_macro.h": "c",
+        "autolevel.h": "c",
+        "adc.h": "c",
+        "stm8s_it.h": "c"
+    }
+}
