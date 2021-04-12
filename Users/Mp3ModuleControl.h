@@ -21,7 +21,7 @@
 #define CMD_VOLUMN_UP       0x04    // volumn up
 #define CMD_VOLUMN_DOWN     0x05    // volumn down
 #define CMD_SET_VOLUMN      0x06    // set volumn, Parameter: 0-30
-#define CMD_SINGLE_CYCLING  0x19    // set volumn, Parameter: 0-30
+#define CMD_SINGLE_CYCLING  0x19    // Cycling play
 
 
 

@@ -27,9 +27,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm8s.h"
+#include "config.h"
 #include "timebase.h"
 #include "Mp3ModuleControl.h"
 #include "WS2812B.h"
+#include "FIFOManage.h"
+
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -129,7 +132,7 @@ void main(void)
 
     if (TimeBase_Get1sSystemTimeDelta())
     {
-
+app_get_msg();
     }
 
     if (ucTestCounter == 2)

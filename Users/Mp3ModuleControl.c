@@ -62,10 +62,7 @@ static void MMC_SendData(u8 ucLen)
     {
         Uart_SendData(ucSendBuff[i]);
         while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
-        {
-            GPIO_WriteLow(GPIOD, GPIO_PIN_2);
-            GPIO_WriteHigh(GPIOD, GPIO_PIN_2);
-        }
+            ;
     }
 }
 

@@ -2128,6 +2128,27 @@
         </group>
     </group>
     <group>
+        <name>System</name>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\config.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\FIFOManage.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\FIFOManage.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\MSG.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\mylib.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\SystemInit.c</name>
+        </file>
+    </group>
+    <group>
         <name>user</name>
         <file>
             <name>$PROJ_DIR$\..\Users\main.c</name>

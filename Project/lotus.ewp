@@ -146,7 +146,7 @@
                 </option>
                 <option>
                     <name>IccOptLevel</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IccOptStrategy</name>
@@ -155,7 +155,7 @@
                 </option>
                 <option>
                     <name>IccOptLevelSlave</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IccOptAllowList</name>
@@ -261,6 +261,7 @@
                     <state>$PROJ_DIR$\..\Users\driver</state>
                     <state>$PROJ_DIR$\..\Users\hardware</state>
                     <state>$PROJ_DIR$\..\Users\program</state>
+                    <state>$PROJ_DIR$\..\Users\System</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1636,6 +1637,27 @@
                 <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_uart1.c</name>
             </file>
         </group>
+    </group>
+    <group>
+        <name>System</name>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\config.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\FIFOManage.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\FIFOManage.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\MSG.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\mylib.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\system\SystemInit.c</name>
+        </file>
     </group>
     <group>
         <name>user</name>
