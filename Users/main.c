@@ -33,7 +33,6 @@
 #include "WS2812B.h"
 #include "FIFOManage.h"
 
-
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
@@ -41,6 +40,7 @@
 /* Private variables ---------------------------------------------------------*/
 uint16_t Conversion_Value = 0;
 static u8 ucTestCounter;
+static u8 counter1ms = 0;
 static bool bplayed;
 // enum errorcode error = NOERROR;
 /* Private function prototypes -----------------------------------------------*/
@@ -72,7 +72,7 @@ static void CLK_Config(void);
 ********************************************************************************/
 static void GPIO_Config()
 {
-  GPIO_Init(GPIOD, (GPIO_Pin_TypeDef)GPIO_PIN_2, GPIO_MODE_OUT_PP_HIGH_FAST);//debug
+  GPIO_Init(GPIOD, (GPIO_Pin_TypeDef)GPIO_PIN_2, GPIO_MODE_OUT_PP_HIGH_FAST); //debug
 }
 
 /********************************************************************************
@@ -115,16 +115,34 @@ void main(void)
   /* led init ---------------------------------------------------*/
   Ws2812b_Configuration();
 
+  /* RAM varibles init ---------------------------------------------------*/
+  System_Init();
+
   /* Enable general interrupts -----------------------------------------*/
   enableInterrupts();
 
-  while (1)
+  while (MainEnable)
   {
 
     // IWDG_ReloadCounter(); //喂狗(理论小于4ms内喂狗都不会复位，由于HSI有偏差，我们设定在xxxms喂狗一次)
 
     TimeBase_HandleTimeBaseCouter(); // Timebase reset
 
+    if (TimeBase_Get1msSystemTimeDelta())
+      counter1ms++;
+
+    if (2 == counter1ms)
+    {
+      counter1ms = 0;
+      System_Flag_2Ms = 1;
+    }
+    
+    DS2MS_CNT();
+    DS10MS_CNT();
+    DS100MS_CNT();
+    DS500MS_CNT();
+  }
+  /*debug
     if (TimeBase_Get1sSystemTimeDelta())
     {
       ucTestCounter += TimeBase_Get1sSystemTimeDelta();
@@ -177,6 +195,7 @@ app_get_msg();
       ucTestCounter = 0;
     }
   }
+  */
 }
 
 #ifdef USE_FULL_ASSERT

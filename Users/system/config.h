@@ -2,12 +2,11 @@
 #define __CONFIG_H__
 
 #include "stm8s.h"
-// #include "STK6037.h"
-// #include "key.h"
+#include "key.h"
 #include "mylib.h"
 #include "SystemInit.h"
-// #include "uart.h"
-// #include "LCD1602.h"
+#include "Mp3Module.h"
+#include "LCD1602.h"
 #include "MSG.h"
 
 
@@ -39,4 +38,11 @@
 #define QUERYACKTIME 20
 #define SYSRETURNTIME 20
 
+/************************************************************************
+          LED灯 --- 播放指示灯
+*************************************************************************/
+#define PLAYLEDCNT          6      //按键有效灯的闪烁时间
+#define PLAYLED_ON		    GPIO_WriteHigh(GPIOB,GPIO_PIN_0)
+#define PLAYLED_OFF		    GPIO_WriteLow(GPIOB,GPIO_PIN_0)
+#define PLAYLED_FLASH	    GPIO_WriteReverse(GPIOB,GPIO_PIN_0)
 #endif

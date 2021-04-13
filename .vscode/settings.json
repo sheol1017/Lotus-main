@@ -12,6 +12,7 @@
         "global_macro.h": "c",
         "autolevel.h": "c",
         "adc.h": "c",
-        "stm8s_it.h": "c"
+        "stm8s_it.h": "c",
+        "LCD1602.C": "cpp"
     }
 }

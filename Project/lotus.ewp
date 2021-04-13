@@ -1618,6 +1618,18 @@
         </file>
     </group>
     <group>
+        <name>hardware</name>
+        <file>
+            <name>$PROJ_DIR$\..\Users\hardware\key.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\hardware\key.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\hardware\Mp3Module.c</name>
+        </file>
+    </group>
+    <group>
         <name>stm8s_driver</name>
         <group>
             <name>src</name>
@@ -1642,12 +1654,6 @@
         <name>System</name>
         <file>
             <name>$PROJ_DIR$\..\Users\system\config.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Users\system\FIFOManage.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Users\system\FIFOManage.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Users\system\MSG.h</name>
