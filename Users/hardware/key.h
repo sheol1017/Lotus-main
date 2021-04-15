@@ -82,6 +82,7 @@ enum
 };
 
 #define KEYIO GPIO_ReadInputData(GPIOC)
+#define KEY_Port 0x38  //PC3 PC4 PC5
 #define NO_KEY 0xff
 
 enum
@@ -151,7 +152,7 @@ extern u16 TFCurFile;
 extern u16 FlashCurFile;
 
 /************************* 对 外 的 接 口 **************************/
-
+void Key_Init(void);
 void Time_Task(void);
 void key_scan(void);
 void Key_Task(void);

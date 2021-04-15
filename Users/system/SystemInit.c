@@ -63,6 +63,7 @@ void System_Init(void)
 	Serial_init() ;
 	Timer0_Init() ;
 	RAM_Init() ;
+	Key_Init();
     itoa1(0);
     itoa2(0);
     itoa3(0);

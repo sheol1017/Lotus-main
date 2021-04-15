@@ -138,7 +138,7 @@ void DS10MS_CNT(void)
 	      	   10MS定时处理的任务
 	         +--------------------+
 *************************************************/
-		// key_scan();
+		key_scan();
 		// UartSend_Collide_Task();
 		// Uart_communication();
 
