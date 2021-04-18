@@ -75,10 +75,15 @@ void System_Init(void)
 	itoa3(0);
 	itoa4(0);
 	TrigEnable = 1;
-	PointFunc = POINTNUM_ONE ;
+	PointFunc = POINTNUM_ONE;
 	input_vol = Middle_VOL; // MAX_MAIN_VOL ;//上电默认音量
-	System_Status = SYS_STATUS_WORK ;
-	SysReturnTime = 30 ;//定义3S的时候等待模块初始化完成
+	System_Status = SYS_STATUS_WORK;
+	SysReturnTime = 30; //定义3S的时候等待模块初始化完成
+
+#ifdef DEBUG
+	OnlineDevice = 0x02;
+	put_msg_lifo(MSG_RETURN_MINIT);
+#endif // DEBUG
 }
 
 /*****************************************************************************************************
@@ -97,7 +102,8 @@ void RAM_Init(void)
 	RecvOver_Flag = 0;
 	Resend_Flag_Enable = 0;
 	MainEnable = TRUE;
-	SysReturnTime = 0 ;
+	SysReturnTime = 0;
+
 	// PlayledCnt = 0 ;
 	// PlayledStatus = 0;
 	// PlayledStatus = SET_PLAYLED_OFF;

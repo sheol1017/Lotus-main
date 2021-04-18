@@ -53,8 +53,8 @@ void MP3_Init(void)
 
     // disable uart interrupt
     // UART_InterruptConfig(UART1_IT_TXE,DISABLE);
-    // UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
-    UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
+    UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
+    // UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
     UART1_ITConfig(UART1_IT_TXE, DISABLE);
     // Enable uart
     Uart_Enable(ENABLE);
@@ -168,14 +168,16 @@ void SendCmd(u8 len, bool flag, u8 time)
  - 返回说明：
  - 注：	    串口接收是采用状态机的方式
 *******************************************************************************************/
-void Serial_0_interrupt_IRQ()
+void Uart_ReadByte_RX_IRQ()
 {
-
     u8 UartTemp = 0;
     if (UART1_GetFlagStatus(UART1_FLAG_RXNE))
     {
         // RI = 0;
         // UartTemp  = SBUF;
+        UART1_ClearITPendingBit(UART1_IT_RXNE);
+        UartTemp = UART1_ReceiveData9();
+
         if (Busy_Flag)
         {
             RecvBusy_Flag = 1;
@@ -510,4 +512,172 @@ void DoSum(u8 *Str, u8 len)
     xorsum = 0 - xorsum;
     *(Str + i) = (u8)(xorsum >> 8);
     *(Str + i + 1) = (u8)(xorsum & 0x00ff);
+}
+
+
+
+/********************************************************************************************
+ - 功能描述： 上电跳转至设备状态
+ - 隶属模块： 外部
+ - 参数说明： 
+ - 返回说明：
+ - 注：	     
+*******************************************************************************************/
+void GoInitDevice(u8 Online)
+{
+    u8 temp;
+    if (0 == Online)
+    {
+        PlayDevice = PLAYDEVICE_SLEEP;
+        return;
+    }
+    temp = Online & 0x01;
+    if (temp)
+    {
+        PlayDevice = PLAYDEVICE_UDISK;
+        return;
+    }
+    temp = Online & 0x02;
+    if (temp) //TF
+    {
+        PlayDevice = PLAYDEVICE_TFCARD;
+        return;
+    }
+    temp = Online & 0x04;
+    if (temp) //PC
+    {
+        PlayDevice = PLAYDEVICE_PC;
+        return;
+    }
+    temp = Online & 0x08;
+    if (temp) //FLASH
+    {
+        PlayDevice = PLAYDEVICE_FLASH;
+        return;
+    }
+}
+
+/********************************************************************************************
+ - 功能描述： 设备拔出跳至下一个设备
+ - 隶属模块： 外部
+ - 参数说明： 
+ - 返回说明：
+ - 注：	     
+*******************************************************************************************/
+void GotoNextDevice(u8 device)
+{
+    if (device == UDISK)
+    {
+        if (OnlineDevice & BIT(TFCARD))
+        {
+            PlayDevice = PLAYDEVICE_TFCARD;
+        }
+        else
+        {
+            if (OnlineDevice & BIT(bFLASH))
+            {
+                PlayDevice = PLAYDEVICE_FLASH;
+            }
+            else
+            {
+                PlayDevice = PLAYDEVICE_SLEEP;
+            }
+        }
+    }
+    else if (device == TFCARD)
+    {
+        if (OnlineDevice & BIT(UDISK))
+        {
+            PlayDevice = PLAYDEVICE_UDISK;
+        }
+        else
+        {
+            if (OnlineDevice & BIT(bFLASH))
+            {
+                PlayDevice = PLAYDEVICE_FLASH;
+            }
+            else
+            {
+                PlayDevice = PLAYDEVICE_SLEEP;
+            }
+        }
+    }
+    else if (device == PC)
+    {
+        if (OnlineDevice & BIT(bFLASH))
+        {
+            PlayDevice = PLAYDEVICE_FLASH;
+        }
+        else
+        {
+            PlayDevice = PLAYDEVICE_SLEEP;
+        }
+    }
+}
+
+void ChangeDevice(u8 dev)
+{
+    if (dev == PLAYDEVICE_UDISK)
+    {
+        if (0 == (OnlineDevice & BIT(UDISK)))
+        {
+            if (OnlineDevice & BIT(TFCARD))
+            {
+                PlayDevice = PLAYDEVICE_TFCARD;
+            }
+            else
+            {
+                if (OnlineDevice & BIT(bFLASH))
+                {
+                    PlayDevice = PLAYDEVICE_FLASH;
+                }
+                else
+                {
+                    PlayDevice = PLAYDEVICE_SLEEP;
+                }
+            }
+        }
+    }
+    if (dev == PLAYDEVICE_TFCARD)
+    {
+        if (0 == (OnlineDevice & BIT(TFCARD)))
+        {
+            if (OnlineDevice & BIT(UDISK))
+            {
+                PlayDevice = PLAYDEVICE_UDISK;
+            }
+            else
+            {
+                if (OnlineDevice & BIT(bFLASH))
+                {
+                    PlayDevice = PLAYDEVICE_FLASH;
+                }
+                else
+                {
+                    PlayDevice = PLAYDEVICE_SLEEP;
+                }
+            }
+        }
+    }
+    else if (dev == PLAYDEVICE_PC)
+    {
+        if (0 == (OnlineDevice & BIT(PC)))
+        {
+            if (OnlineDevice & BIT(bFLASH))
+            {
+                PlayDevice = PLAYDEVICE_FLASH;
+            }
+            else
+            {
+                PlayDevice = PLAYDEVICE_SLEEP;
+            }
+        }
+    }
+    else if (dev == PLAYDEVICE_FLASH)
+    {
+        if (0 == (OnlineDevice & BIT(bFLASH)))
+        {
+            PlayDevice = PLAYDEVICE_SLEEP;
+        }
+    }
 }

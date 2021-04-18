@@ -9,7 +9,7 @@
 #include "LCD1602.h"
 #include "MSG.h"
 
-
+#define DEBUG
 
 #define VER 0x10
 

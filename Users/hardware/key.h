@@ -160,8 +160,6 @@ void Indicator_Scan(void);
 void MSG_Task(void);
 void put_msg_lifo(u8 msg);
 u8 app_get_msg(void);
-void GoInitDevice(u8 Online) ;
-void GotoNextDevice(u8 device) ;
-void ChangeDevice(u8 dev);
+
 
 #endif

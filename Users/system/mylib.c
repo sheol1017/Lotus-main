@@ -140,7 +140,7 @@ void DS10MS_CNT(void)
 *************************************************/
 		key_scan();
 		UartSend_Collide_Task();
-		// Uart_communication();
+		Uart_communication();
 
 		if ((++counter10ms) == 10)
 		{
