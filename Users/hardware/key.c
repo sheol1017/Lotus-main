@@ -697,6 +697,7 @@ void MSG_Task(void)
     case MSG_MUSIC_PLAY:
         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
         DBG("MUSIC_PLAY\n");
+        RGB_Refresh(COLOR_GREEN, LED_Num);
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PLAY");
         SysReturnTime = SYSRETURNTIME;

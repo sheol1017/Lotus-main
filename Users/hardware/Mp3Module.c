@@ -53,7 +53,12 @@ void MP3_Init(void)
 
     // disable uart interrupt
     // UART_InterruptConfig(UART1_IT_TXE,DISABLE);
+    
+    #ifdef UARTREAD
     UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
+    #else
+    UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE);
+    #endif // UARTREAD
     // UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
     UART1_ITConfig(UART1_IT_TXE, DISABLE);
     // Enable uart

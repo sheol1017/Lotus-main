@@ -11,6 +11,7 @@
 #include "MSG.h"
 
 #define DEBUG
+// #define UARTREAD
 
 #define VER 0x10
 
