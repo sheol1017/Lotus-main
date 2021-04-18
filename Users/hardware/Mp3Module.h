@@ -108,7 +108,7 @@ void Uart_SendCMD(u8 CMD ,u8 feedback , u16 dat);
 void UartSend_Collide_Task(void);
 void Uart_communication(void);
 void Serial_0_interrupt_IRQ(void);
-
+void MP3_Init(void);
 #endif
 
 

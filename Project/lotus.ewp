@@ -1671,9 +1671,6 @@
             <name>$PROJ_DIR$\..\Users\main.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Users\Mp3ModuleControl.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Users\stm8s_conf.h</name>
         </file>
         <file>

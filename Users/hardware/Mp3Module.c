@@ -1,5 +1,5 @@
 #include "config.h"
-
+#include "uart.h"
 /******************************************************************************************************************
 
 					+--------------------------------------------------+
@@ -16,16 +16,60 @@
 
 ******************************************************************************************************************/
 
-static u8 Send_buf[SENDLENTH] = {0} ;
-static u8 Recv_buf[SENDLENTH] = {0} ;
+static u8 Send_buf[SENDLENTH] = {0};
+static u8 Recv_buf[SENDLENTH] = {0};
 
-static u8 SendDataLen = 0 ;
-static u8 ResendDataLen = 0 ;
+static u8 SendDataLen = 0;
+static u8 ResendDataLen = 0;
 
-const u8 hex[]={"0123456789ABCDEF"};
+const u8 hex[] = {"0123456789ABCDEF"};
 
-void DoSum( u8 *Str, u8 len) ;
+void DoSum(u8 *Str, u8 len);
 void Uart_Task(u8 *pr);
+void MP3_Init(void);
+
+/********************************************************************************************
+ - 功能描述： 初始化串口
+ - 隶属模块： 外部
+ - 参数说明：
+ - 返回说明：
+ - 注：	      
+********************************************************************************************/
+void MP3_Init(void)
+{
+    // init uart1
+    Uart_Init();
+
+    // config uart1
+    // baud rate: 9600 bps
+    // data bit: 8
+    // stop bit: 1
+    // No Parity
+    // sync mode disbled
+    // Rx and Tx are enabled
+    Uart_ParameterConfig(9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1,
+                         UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE,
+                         UART1_MODE_TXRX_ENABLE);
+
+    // disable uart interrupt
+    // UART_InterruptConfig(UART1_IT_TXE,DISABLE);
+    // UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
+    UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
+    UART1_ITConfig(UART1_IT_TXE, DISABLE);
+    // Enable uart
+    Uart_Enable(ENABLE);
+
+    // set start byte
+    //ucSendBuff[0] = START_BYTE;
+    // set end byte
+    //ucSendBuff[9] = END_BYTE;
+
+    // GPIO init
+    // PD5 UART TX
+    GPIO_Init(GPIOD, GPIO_PIN_5, GPIO_MODE_OUT_PP_HIGH_FAST);
+    // PD6 UART RX
+    GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
+}
 /********************************************************************************************
  - 功能描述： 串口发送一个字节
  - 隶属模块： 外部
@@ -38,6 +82,11 @@ void Uart_PutByte(u8 ch)
     // SBUF  = ch;
     // while(!TI){;}
     // TI = 0;
+
+    Uart_SendData(ch);
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+        ;
+    //Uart_Enable(DISABLE);
 }
 
 /********************************************************************************************
@@ -48,13 +97,13 @@ void Uart_PutByte(u8 ch)
  - 注：	      
 ********************************************************************************************/
 #if FUNC_UARTDBG_EN
-void Uart_PutString(u8* value)
+void Uart_PutString(u8 *value)
 {
-	while((*value) != '\0')
-	{
-		Uart_PutByte(*value) ;
-		value ++ ;
-	}
+    while ((*value) != '\0')
+    {
+        Uart_PutByte(*value);
+        value++;
+    }
 }
 #endif
 /********************************************************************************************
@@ -67,11 +116,11 @@ void Uart_PutString(u8* value)
 #if FUNC_UARTDBG_EN
 void Uart_PutChar(u8 dat)
 {
-	u8 ch = 0 ;
-	ch =(dat>>4) & 0x0f;
-	Uart_PutByte(hex[ch]);
-	ch = dat & 0x0f;
-	Uart_PutByte(hex[ch]);
+    u8 ch = 0;
+    ch = (dat >> 4) & 0x0f;
+    Uart_PutByte(hex[ch]);
+    ch = dat & 0x0f;
+    Uart_PutByte(hex[ch]);
 }
 #endif
 
@@ -82,29 +131,34 @@ void Uart_PutChar(u8 dat)
  - 返回说明： 
  - 注：无     
 *****************************************************************************************************/
-void SendCmd(u8 len,bool flag,u8 time)
+void SendCmd(u8 len, bool flag, u8 time)
 {
-    bool Status = 0 ;
-    u8 i = 0 ;
+    bool Status = 0;
+    u8 i = 0;
 
     // Status   = ES;
     // ES       = 0;
     // TI       = 0;
-    Uart_PutByte(0x7E); //起始
-    for(i=0; i<len; i++)//数据
+    Uart_PutByte(0x7E);       //起始
+    for (i = 0; i < len; i++) //数据
     {
-		Uart_PutByte(Send_buf[i]) ;
+        Uart_PutByte(Send_buf[i]);
     }
-    Uart_PutByte(0xEF) ;//结束
+
+    Uart_PutByte(0xEF); //结束
     // ES  = Status;
-    if(flag)                  //设置重发标志  溢出时间
+    if (flag) //设置重发标志  溢出时间
     {
-        Resend_Flag  = 1; SendDataLen = len;  OutTimeCnt = time;
+        Resend_Flag = 1;
+        SendDataLen = len;
+        OutTimeCnt = time;
     }
     else
-	{
-        Resend_Flag  = 0; SendDataLen = 0; 	  ResendCount  = 1;
-	}
+    {
+        Resend_Flag = 0;
+        SendDataLen = 0;
+        ResendCount = 1;
+    }
 }
 
 /*******************************************************************************************
@@ -116,78 +170,78 @@ void SendCmd(u8 len,bool flag,u8 time)
 *******************************************************************************************/
 void Serial_0_interrupt_IRQ()
 {
-    
-	u8 UartTemp = 0 ;
-	if(UART1_GetFlagStatus(UART1_FLAG_RXNE))
-	{	
-		// RI = 0;
-		// UartTemp  = SBUF;
-        if(Busy_Flag)
+
+    u8 UartTemp = 0;
+    if (UART1_GetFlagStatus(UART1_FLAG_RXNE))
+    {
+        // RI = 0;
+        // UartTemp  = SBUF;
+        if (Busy_Flag)
         {
-            RecvBusy_Flag = 1 ;
+            RecvBusy_Flag = 1;
         }
-        switch(UartRecvStatus)
+        switch (UartRecvStatus)
         {
-            case UART_RECV_IDLE:
-                                if(0x7E == UartTemp)
-                                {
-                                    UartRecv_100Ms = 10 ;
-                                    UartRecvStatus = UART_RECV_VER ;
-                                }
-                                else
-                                {
-                                    UartRecvStatus = UART_RECV_IDLE ;
-                                }
-                                break ;
-            case UART_RECV_VER:
-                                Recv_buf[0] = UartTemp ;
-                                UartRecvStatus = UART_RECV_LENTH ;
-                                break ;
-            case UART_RECV_LENTH:
-                                Recv_buf[1] = UartTemp ;
-                                UartRecvStatus = UART_RECV_CMD ;
-                                break ;
-            case UART_RECV_CMD:
-                                Recv_buf[2] = UartTemp ;
-                                UartRecvStatus = UART_RECV_FEEDBACK ;
-                                break ;
-            case UART_RECV_FEEDBACK:
-                                Recv_buf[3] = UartTemp ;
-                                UartRecvStatus = UART_RECV_DATAH ;
-                                break ;
-            case UART_RECV_DATAH:
-                                Recv_buf[4] = UartTemp ;
-                                UartRecvStatus = UART_RECV_DATAL ;
-                                break ;
-            case UART_RECV_DATAL:
-                                Recv_buf[5] = UartTemp ;
-                                UartRecvStatus = UART_RECV_CHECKSUMH ;
-                                break ;
-            case UART_RECV_CHECKSUMH:
-                                Recv_buf[6] = UartTemp ;
-                                UartRecvStatus = UART_RECV_CHECKSUML ;
-                                break ;
-            case UART_RECV_CHECKSUML:
-                                Recv_buf[7] = UartTemp ;
-                                UartRecvStatus = UART_RECV_OVER ;
-                                break ;
-            case UART_RECV_OVER :
-                                if(0xEF == UartTemp)
-                                {
-                                    UartRecv_100Ms = 0 ;//清计时器
-                                    RecvOver_Flag = 1 ;
-                                    UartRecvStatus = UART_RECV_IDLE ;
-                                }
-                                else
-                                {
-                                    RecvError_Flag = 1 ;//错误处理
-                                    UartRecvStatus = UART_RECV_IDLE ;
-                                }
-                                break ;
-            default :
-                                break ;
+        case UART_RECV_IDLE:
+            if (0x7E == UartTemp)
+            {
+                UartRecv_100Ms = 10;
+                UartRecvStatus = UART_RECV_VER;
+            }
+            else
+            {
+                UartRecvStatus = UART_RECV_IDLE;
+            }
+            break;
+        case UART_RECV_VER:
+            Recv_buf[0] = UartTemp;
+            UartRecvStatus = UART_RECV_LENTH;
+            break;
+        case UART_RECV_LENTH:
+            Recv_buf[1] = UartTemp;
+            UartRecvStatus = UART_RECV_CMD;
+            break;
+        case UART_RECV_CMD:
+            Recv_buf[2] = UartTemp;
+            UartRecvStatus = UART_RECV_FEEDBACK;
+            break;
+        case UART_RECV_FEEDBACK:
+            Recv_buf[3] = UartTemp;
+            UartRecvStatus = UART_RECV_DATAH;
+            break;
+        case UART_RECV_DATAH:
+            Recv_buf[4] = UartTemp;
+            UartRecvStatus = UART_RECV_DATAL;
+            break;
+        case UART_RECV_DATAL:
+            Recv_buf[5] = UartTemp;
+            UartRecvStatus = UART_RECV_CHECKSUMH;
+            break;
+        case UART_RECV_CHECKSUMH:
+            Recv_buf[6] = UartTemp;
+            UartRecvStatus = UART_RECV_CHECKSUML;
+            break;
+        case UART_RECV_CHECKSUML:
+            Recv_buf[7] = UartTemp;
+            UartRecvStatus = UART_RECV_OVER;
+            break;
+        case UART_RECV_OVER:
+            if (0xEF == UartTemp)
+            {
+                UartRecv_100Ms = 0; //清计时器
+                RecvOver_Flag = 1;
+                UartRecvStatus = UART_RECV_IDLE;
+            }
+            else
+            {
+                RecvError_Flag = 1; //错误处理
+                UartRecvStatus = UART_RECV_IDLE;
+            }
+            break;
+        default:
+            break;
         }
-	}
+    }
 }
 
 /********************************************************************************************
@@ -199,20 +253,21 @@ void Serial_0_interrupt_IRQ()
 ********************************************************************************************/
 void UartSend_Collide_Task(void)
 {
-    if(1 == Resend_Enable_Flag)
+    if (1 == Resend_Enable_Flag)
     {
-        if(!Resend_Flag) return;	    //如果 Resend_Flag1 = 1 时间溢出还没有收到ACK 则重发
+        if (!Resend_Flag)
+            return; //如果 Resend_Flag1 = 1 时间溢出还没有收到ACK 则重发
 
-        ResendCount ++;
+        ResendCount++;
 
-    	if(ResendCount>2)
+        if (ResendCount > 2)
         {
-    	    ResendCount  = 1;
-            Resend_Flag  = 0;
+            ResendCount = 1;
+            Resend_Flag = 0;
             return;
         }
-    	SendCmd(ResendDataLen,1,25);    //重发数据
-	}
+        SendCmd(ResendDataLen, 1, 25); //重发数据
+    }
 }
 /********************************************************************************************
  - 功能描述：争对接收的命令进行处理
@@ -223,37 +278,37 @@ void UartSend_Collide_Task(void)
 ********************************************************************************************/
 void Uart_communication(void)
 {
-	u8 i, *pi ;
+    u8 i, *pi;
 
-	u16  xorsum =0,xorsum1=0 ;
+    u16 xorsum = 0, xorsum1 = 0;
 
-    if(1 == RecvError_Flag)//接收错误处理
+    if (1 == RecvError_Flag) //接收错误处理
     {
-        RecvError_Flag = 0 ;
-        UartRecvStatus = UART_RECV_IDLE ;
-        Uart_SendCMD(0x40 , 0 , 1) ;//错误处理请求重发
-        return ;
+        RecvError_Flag = 0;
+        UartRecvStatus = UART_RECV_IDLE;
+        Uart_SendCMD(0x40, 0, 1); //错误处理请求重发
+        return;
     }
-    if(1 == RecvOver_Flag)//一帧数据接收完毕
+    if (1 == RecvOver_Flag) //一帧数据接收完毕
     {
-        RecvOver_Flag = 0 ;
-    	pi = Recv_buf;
-    	for(i=0; i<(*(pi+1)); i++)
-    	{
-    	    xorsum  = xorsum + pi[i] ;
-    	}
-    	xorsum1 = ((u16)((*(pi+i))<<8)) | (*(pi+i+1));
-    	xorsum  = xorsum + xorsum1;
+        RecvOver_Flag = 0;
+        pi = Recv_buf;
+        for (i = 0; i < (*(pi + 1)); i++)
+        {
+            xorsum = xorsum + pi[i];
+        }
+        xorsum1 = ((u16)((*(pi + i)) << 8)) | (*(pi + i + 1));
+        xorsum = xorsum + xorsum1;
 
-    	if(!xorsum)
-    	{
-    	    Uart_Task(pi);//串口处理
-    	}
+        if (!xorsum)
+        {
+            Uart_Task(pi); //串口处理
+        }
         else
         {
-            RecvError_Flag = 1 ;//错误处理
+            RecvError_Flag = 1; //错误处理
         }
-        UartRecvStatus = UART_RECV_IDLE ;
+        UartRecvStatus = UART_RECV_IDLE;
     }
 }
 
@@ -266,152 +321,150 @@ void Uart_communication(void)
 **********************************************************************************************/
 void Uart_Task(u8 *pr)
 {
-    u16 Temp16 = 0 ;
-    u8 *pi ,tempH ,tempL , CMD , FeedBack;		
+    u16 Temp16 = 0;
+    u8 *pi, tempH, tempL, CMD, FeedBack;
     pi = pr;
 
-    tempH = *(pi+4) ;
-    tempL = *(pi+5) ;
-    Temp16 = (((u16)(tempH))<<8)|tempL ;
-    CMD   = *(pi+2) ;
-    FeedBack = *(pi+3) ;
+    tempH = *(pi + 4);
+    tempL = *(pi + 5);
+    Temp16 = (((u16)(tempH)) << 8) | tempL;
+    CMD = *(pi + 2);
+    FeedBack = *(pi + 3);
 
-    switch(CMD )
+    switch (CMD)
     {
-        case (0x41)://收到应答ACK
-                    UartRecvACK = 0 ;
-                    PlayledCnt = PLAYLEDCNT ;
-            		PlayledStatus = SET_PLAYLED_ON;
-                    break ;
-    /**********************************************************************
+    case (0x41): //收到应答ACK
+        UartRecvACK = 0;
+        PlayledCnt = PLAYLEDCNT;
+        PlayledStatus = SET_PLAYLED_ON;
+        break;
+        /**********************************************************************
     - 1、设备插入拔出消息
-    **********************************************************************/   
-        case (0x3A)://设备插入
-                    if(tempL == 0x01)
-                    {
-                        put_msg_lifo(MSG_UDISK_IN);
-                    }
-                    else if(tempL == 0x02)
-                    {
-                        put_msg_lifo(MSG_TF_IN);                    
-                    }
-                    else if(tempL == 0x04)
-                    {
-                        put_msg_lifo(MSG_PC_IN);
-                    }
-                    break;
-        case (0x3B)://设备拔出
-                    if(tempL == 0x01)
-                    {
-                        put_msg_lifo(MSG_UDISK_OUT);
-                    }
-                    else if(tempL == 0x02)
-                    {
-                        put_msg_lifo(MSG_TF_OUT);                    
-                    }
-                    else if(tempL == 0x04)
-                    {
-                        put_msg_lifo(MSG_PC_OUT);
-                    }
-                    break;
-                    
-    /**********************************************************************
-    - 1、收到当前曲目播放完毕消息
-    **********************************************************************/   
-        case (0x3C)://U盘当前曲目播放完毕
-                    if(PLAYDEVICE_UDISK == PlayDevice)
-                    {
-                        put_msg_lifo(MSG_MUSIC_OVER);
-                    }
-                    break;
-        case (0x3D)://TF当前曲目播放完毕
-                    if(PLAYDEVICE_TFCARD == PlayDevice)
-                    {
-                        put_msg_lifo(MSG_MUSIC_OVER);
-                    }
-                    break ;
-        case (0x3E)://FLASH当前曲目播放完毕
-                    if(PLAYDEVICE_FLASH == PlayDevice)
-                    {
-                        put_msg_lifo(MSG_MUSIC_OVER);
-                    }
-                    break ;
-    /**********************************************************************
-    - 1、模块上电返回的数据
-    **********************************************************************/  
-        case (0x3F):
-                    OnlineDevice = tempL ;
-                    put_msg_lifo(MSG_RETURN_MINIT);
-                    break ;
+    **********************************************************************/
+    case (0x3A): //设备插入
+        if (tempL == 0x01)
+        {
+            put_msg_lifo(MSG_UDISK_IN);
+        }
+        else if (tempL == 0x02)
+        {
+            put_msg_lifo(MSG_TF_IN);
+        }
+        else if (tempL == 0x04)
+        {
+            put_msg_lifo(MSG_PC_IN);
+        }
+        break;
+    case (0x3B): //设备拔出
+        if (tempL == 0x01)
+        {
+            put_msg_lifo(MSG_UDISK_OUT);
+        }
+        else if (tempL == 0x02)
+        {
+            put_msg_lifo(MSG_TF_OUT);
+        }
+        else if (tempL == 0x04)
+        {
+            put_msg_lifo(MSG_PC_OUT);
+        }
+        break;
 
-    /**********************************************************************
+        /**********************************************************************
+    - 1、收到当前曲目播放完毕消息
+    **********************************************************************/
+    case (0x3C): //U盘当前曲目播放完毕
+        if (PLAYDEVICE_UDISK == PlayDevice)
+        {
+            put_msg_lifo(MSG_MUSIC_OVER);
+        }
+        break;
+    case (0x3D): //TF当前曲目播放完毕
+        if (PLAYDEVICE_TFCARD == PlayDevice)
+        {
+            put_msg_lifo(MSG_MUSIC_OVER);
+        }
+        break;
+    case (0x3E): //FLASH当前曲目播放完毕
+        if (PLAYDEVICE_FLASH == PlayDevice)
+        {
+            put_msg_lifo(MSG_MUSIC_OVER);
+        }
+        break;
+        /**********************************************************************
+    - 1、模块上电返回的数据
+    **********************************************************************/
+    case (0x3F):
+        OnlineDevice = tempL;
+        put_msg_lifo(MSG_RETURN_MINIT);
+        break;
+
+        /**********************************************************************
     - 1、模块返回的错误
-    **********************************************************************/  
-        case (0x40):
-                    ucErrorStatus = tempL ;
-                    put_msg_lifo(MSG_RECV_ERROR);
-                    break ;
-                    
-    /**********************************************************************
+    **********************************************************************/
+    case (0x40):
+        ucErrorStatus = tempL;
+        put_msg_lifo(MSG_RECV_ERROR);
+        break;
+
+        /**********************************************************************
     - 1、查询参数
     **********************************************************************/
-        case (0x42)://查询当前状态
-                  
-                    break;
-        case (0x43)://查询当前系统音量
-                    input_vol = tempL ;
-                    put_msg_lifo(MSG_RETURN_VOL);  
-                    break;
-        case (0x44)://查询当前EQ
-                    CurrentEQ = tempL ;
-                    put_msg_lifo(MSG_RETURN_EQ);  
-                    break;
-        case (0x45)://查询当前播放模式
-                    PlayMode = tempL ;
-                    put_msg_lifo(MSG_RETURN_PLAYMODE);  
-                    break;
-        case (0x46)://查询当前软件版本
+    case (0x42): //查询当前状态
 
-                    break;
-    /**********************************************************************
+        break;
+    case (0x43): //查询当前系统音量
+        input_vol = tempL;
+        put_msg_lifo(MSG_RETURN_VOL);
+        break;
+    case (0x44): //查询当前EQ
+        CurrentEQ = tempL;
+        put_msg_lifo(MSG_RETURN_EQ);
+        break;
+    case (0x45): //查询当前播放模式
+        PlayMode = tempL;
+        put_msg_lifo(MSG_RETURN_PLAYMODE);
+        break;
+    case (0x46): //查询当前软件版本
+
+        break;
+        /**********************************************************************
     - 1、查询参数 --- 设备总文件数
     **********************************************************************/
-        case (0x47)://查询UDISK文件总数
-                    UDiskTotal = Temp16 ;
-                    put_msg_lifo(MSG_RETURN_NUMTOTAL); 
-                    break ;
-        case (0x48)://查询TFCARD文件总数
-                    TFTotal = Temp16 ;
-                    put_msg_lifo(MSG_RETURN_NUMTOTAL);
-                    break ;
-        case (0x49)://查询FLASH文件总数
-                    FlashTotal = Temp16 ;
-                    put_msg_lifo(MSG_RETURN_NUMTOTAL); 
-                    break;
+    case (0x47): //查询UDISK文件总数
+        UDiskTotal = Temp16;
+        put_msg_lifo(MSG_RETURN_NUMTOTAL);
+        break;
+    case (0x48): //查询TFCARD文件总数
+        TFTotal = Temp16;
+        put_msg_lifo(MSG_RETURN_NUMTOTAL);
+        break;
+    case (0x49): //查询FLASH文件总数
+        FlashTotal = Temp16;
+        put_msg_lifo(MSG_RETURN_NUMTOTAL);
+        break;
 
-    /**********************************************************************
+        /**********************************************************************
     - 1、查询参数 --- 设备当前播放的文件数
-    **********************************************************************/   
-        case (0x4B)://查询UDISK的当前曲目
-                    UDiskCurFile = Temp16 ;
-                    put_msg_lifo(MSG_RETURN_CURNUM);
-                    break;
-    
-        case (0x4C)://查询TF卡的当前曲目
-                    TFCurFile = Temp16 ;
-                    put_msg_lifo(MSG_RETURN_CURNUM);
-                    break ;
-                  
-        case (0x4D)://查询FLASH的当前曲目
-                    FlashCurFile = Temp16 ;
-                    put_msg_lifo(MSG_RETURN_CURNUM);
-                    break;
-        default:
-                    break;
+    **********************************************************************/
+    case (0x4B): //查询UDISK的当前曲目
+        UDiskCurFile = Temp16;
+        put_msg_lifo(MSG_RETURN_CURNUM);
+        break;
+
+    case (0x4C): //查询TF卡的当前曲目
+        TFCurFile = Temp16;
+        put_msg_lifo(MSG_RETURN_CURNUM);
+        break;
+
+    case (0x4D): //查询FLASH的当前曲目
+        FlashCurFile = Temp16;
+        put_msg_lifo(MSG_RETURN_CURNUM);
+        break;
+    default:
+        break;
     }
 }
-
-
 
 /********************************************************************************************
  - 功能描述： 串口向外发送命令[包括控制和查询]
@@ -422,19 +475,18 @@ void Uart_Task(u8 *pr)
  - 返回说明：
  - 注：       
 ********************************************************************************************/
-void Uart_SendCMD(u8 CMD ,u8 feedback , u16 dat)
+void Uart_SendCMD(u8 CMD, u8 feedback, u16 dat)
 {
-    Send_buf[0] = 0xff;    //保留字节 
-    Send_buf[1] = 0x06;    //长度
-    Send_buf[2] = CMD;     //控制指令
-    Send_buf[3] = feedback;//是否需要反馈
-    Send_buf[4] = (u8)(dat >> 8);//datah
-    Send_buf[5] = (u8)(dat);     //datal
-    DoSum(&Send_buf[0],6);        //校验
-    SendCmd(8,1,30);       //发送此帧数据
-    UartRecvACK = 3 ;//设定等待应答的时间[300ms]
+    Send_buf[0] = 0xff;           //保留字节
+    Send_buf[1] = 0x06;           //长度
+    Send_buf[2] = CMD;            //控制指令
+    Send_buf[3] = feedback;       //是否需要反馈
+    Send_buf[4] = (u8)(dat >> 8); //datah
+    Send_buf[5] = (u8)(dat);      //datal
+    DoSum(&Send_buf[0], 6);       //校验
+    SendCmd(8, 1, 30);            //发送此帧数据
+    UartRecvACK = 3;              //设定等待应答的时间[300ms]
 }
-
 
 /********************************************************************************************
  - 功能描述：求和校验
@@ -446,81 +498,16 @@ void Uart_SendCMD(u8 CMD ,u8 feedback , u16 dat)
              接收端就将接收到的一帧数据，去掉起始和结束。将中间的数据累加，再加上接收到的校验
              字节。刚好为0.这样就代表接收到的数据完全正确。
 ********************************************************************************************/
-void DoSum( u8 *Str, u8 len)
+void DoSum(u8 *Str, u8 len)
 {
     u16 xorsum = 0;
     u8 i;
 
-    for(i=0; i<len; i++)
+    for (i = 0; i < len; i++)
     {
-        xorsum  = xorsum + Str[i];
+        xorsum = xorsum + Str[i];
     }
-	xorsum     = 0 -xorsum;
-	*(Str+i)   = (u8)(xorsum >>8);
-	*(Str+i+1) = (u8)(xorsum & 0x00ff);
+    xorsum = 0 - xorsum;
+    *(Str + i) = (u8)(xorsum >> 8);
+    *(Str + i + 1) = (u8)(xorsum & 0x00ff);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

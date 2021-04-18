@@ -34,7 +34,7 @@
 
 #define SENDLENTH 10    //发送数据总长度
 #define MAX_MAIN_VOL 30 //最大音量
-
+#define Middle_VOL 15 //最大音量
 #define QUERYACKTIME 20
 #define SYSRETURNTIME 20
 

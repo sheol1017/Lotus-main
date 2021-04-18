@@ -139,7 +139,7 @@ void DS10MS_CNT(void)
 	         +--------------------+
 *************************************************/
 		key_scan();
-		// UartSend_Collide_Task();
+		UartSend_Collide_Task();
 		// Uart_communication();
 
 		if ((++counter10ms) == 10)
@@ -171,8 +171,8 @@ void DS100MS_CNT(void)
 		1、100Ms的定时处理
 *************************************************/
 		IWDG_ReloadCounter(); //FEED_WDT() ; //喂狗
-		// Indicator_Scan();
-		// Time_Task();
+		// Indicator_Scan();  //播放指示灯的控制
+		Time_Task();
 		if (++counter100ms == 5)
 		{
 			counter100ms = 0;

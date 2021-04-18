@@ -13,7 +13,7 @@
  - 备注    ：
 ******************************************************************************************************************/
 
-void RAM_Init(void) ;
+void RAM_Init(void);
 /*****************************************************************************************************
  - 功能描述：定时器0的初始化
  - 参数说明：无
@@ -22,7 +22,7 @@ void RAM_Init(void) ;
 *****************************************************************************************************/
 void Timer0_Init(void)
 {
-	// TMOD |= 0x01; 
+	// TMOD |= 0x01;
 	// EA = 1 ;
 	// ET0= 1 ;
 	// TR0= 1 ;
@@ -41,15 +41,15 @@ void Serial_init(void)
 {
 	// TMOD = 0x20;                // 设置 T1 为波特率发生器
 	// SCON = 0x50;                // 0101,0000 8位数据位, 无奇偶校验
-				   		
+
 	// PCON = 0x00;                //PCON=0;
 
 	// TH1=256-(SYS_Fosc/COMM_BAUD_RATE/32/12);//设置为9600波特率
 	// TL1=256-(SYS_Fosc/COMM_BAUD_RATE/32/12);
 
-    // TR1     = 1; 			   //定时器1打开
-    // REN     = 1;			   //串口1接收使能
-    // ES      = 1;			   //串口1中断使能
+	// TR1     = 1; 			   //定时器1打开
+	// REN     = 1;			   //串口1接收使能
+	// ES      = 1;			   //串口1中断使能
 }
 
 /*****************************************************************************************************
@@ -60,19 +60,25 @@ void Serial_init(void)
 *****************************************************************************************************/
 void System_Init(void)
 {
-	Serial_init() ;
-	Timer0_Init() ;
-	RAM_Init() ;
+	Serial_init();
+	Timer0_Init();
+	RAM_Init();
 	Key_Init();
-    itoa1(0);
-    itoa2(0);
-    itoa3(0);
-    itoa4(0);
-    TrigEnable = 1 ;
-    // PointFunc = POINTNUM_ONE ;
-    // input_vol = MAX_MAIN_VOL ;//上电默认最大音量
-    // System_Status = SYS_STATUS_WORK ;
-    // SysReturnTime = 30 ;//定义3S的时候等待模块初始化完成
+	/* Mp3 module control init ------------------------------------*/
+	// MMC_Init();
+	MP3_Init();
+
+	/* led init ---------------------------------------------------*/
+	Ws2812b_Configuration();
+	itoa1(0);
+	itoa2(0);
+	itoa3(0);
+	itoa4(0);
+	TrigEnable = 1;
+	PointFunc = POINTNUM_ONE ;
+	input_vol = Middle_VOL; // MAX_MAIN_VOL ;//上电默认音量
+	System_Status = SYS_STATUS_WORK ;
+	SysReturnTime = 30 ;//定义3S的时候等待模块初始化完成
 }
 
 /*****************************************************************************************************
@@ -84,17 +90,17 @@ void System_Init(void)
 *****************************************************************************************************/
 void RAM_Init(void)
 {
-	System_Flag_2Ms    = 0 ;
-	System_Flag_10Ms   = 0 ;
-	System_Flag_100Ms  = 0 ;
-	System_Flag_500Ms	   = 0 ;
-	RecvOver_Flag	   = 0 ;
-	Resend_Flag_Enable = 0 ;
-	MainEnable  = TRUE ;  
-    // SysReturnTime = 0 ;
-    // PlayledCnt = 0 ;
-    // PlayledStatus = 0;
-    // PlayledStatus = SET_PLAYLED_OFF;
+	System_Flag_2Ms = 0;
+	System_Flag_10Ms = 0;
+	System_Flag_100Ms = 0;
+	System_Flag_500Ms = 0;
+	RecvOver_Flag = 0;
+	Resend_Flag_Enable = 0;
+	MainEnable = TRUE;
+	SysReturnTime = 0 ;
+	// PlayledCnt = 0 ;
+	// PlayledStatus = 0;
+	// PlayledStatus = SET_PLAYLED_OFF;
 }
 
 /*****************************************************************************************************
@@ -109,4 +115,3 @@ void RAM_Init(void)
 // 	TL0= TIMER0_L ;
 // 	System_Flag_2Ms = 1 ;
 // }
-

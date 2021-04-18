@@ -29,9 +29,10 @@
 #include "stm8s.h"
 #include "config.h"
 #include "timebase.h"
-#include "Mp3ModuleControl.h"
+//#include "Mp3ModuleControl.h"
+#include "Mp3Module.h"
 #include "WS2812B.h"
-#include "FIFOManage.h"
+//#include "FIFOManage.h"
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -108,12 +109,6 @@ void main(void)
 
   /* TimeBase Init -----------------------------------------------*/
   TimeBase_Init();
-
-  /* Mp3 module control init ------------------------------------*/
-  MMC_Init();
-
-  /* led init ---------------------------------------------------*/
-  Ws2812b_Configuration();
 
   /* RAM varibles init ---------------------------------------------------*/
   System_Init();
