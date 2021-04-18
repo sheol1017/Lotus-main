@@ -137,16 +137,13 @@ void main(void)
     DS100MS_CNT();
     DS500MS_CNT();
   }
-  /*debug
+  /*
+  //debug
     if (TimeBase_Get1sSystemTimeDelta())
     {
       ucTestCounter += TimeBase_Get1sSystemTimeDelta();
     }
 
-    if (TimeBase_Get1sSystemTimeDelta())
-    {
-app_get_msg();
-    }
 
     if (ucTestCounter == 2)
     {
@@ -154,15 +151,6 @@ app_get_msg();
       RGB_Refresh(COLOR_WHITE, LED_Num);
       ucTestCounter++;
 
-            
-
-      if (!bplayed)
-      {
-        bplayed = TRUE;
-        MMC_SELECT_SONG(0001u);
-        MMC_SET_VOLUMN_Mid();
-        MMC_SET_SINGLE_CYCLING();
-      }
     }
     else if (ucTestCounter == 5)
     {
@@ -189,8 +177,8 @@ app_get_msg();
       RGB_Refresh(COLOR_PURPLE, LED_Num);
       ucTestCounter = 0;
     }
-  }
-  */
+*/
+
 }
 
 #ifdef USE_FULL_ASSERT

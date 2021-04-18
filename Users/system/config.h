@@ -7,6 +7,7 @@
 #include "SystemInit.h"
 #include "Mp3Module.h"
 #include "LCD1602.h"
+#include "WS2812B.h"
 #include "MSG.h"
 
 #define DEBUG
