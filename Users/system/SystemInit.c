@@ -82,9 +82,7 @@ void System_Init(void)
 
 #ifdef DEBUG
 	OnlineDevice = 0x02;
-	put_msg_lifo(MSG_RETURN_MINIT);
-	put_msg_lifo(MSG_VOL_UP);
-	
+	put_msg_lifo(MSG_RETURN_MINIT);	
 #endif // DEBUG
 }
 

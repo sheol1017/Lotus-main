@@ -69,9 +69,9 @@ const u8 key_table[12] = {
     /* - 0 -*/ MSG_0,                   \
         /* - 1 -*/ MSG_1,               \
         /* - 2 -*/ MSG_2,               \
-        /* - 3 -*/ MSG_VOL_UP,               \
-        /* - 4 -*/ MSG_MUSIC_PLAY,               \
-        /* - 5 -*/ MSG_VOL_DOWN,               \
+        /* - 3 -*/ MSG_VOL_UP,          \
+        /* - 4 -*/ MSG_MUSIC_PLAY,      \
+        /* - 5 -*/ MSG_VOL_DOWN,        \
         /* - 6 -*/ MSG_PLAYALL,         \
         /* - 7 -*/ MSG_SET_PLAYMODE,    \
         /* - 8 -*/ MSG_MUSIC_NEXT_FILE, \
@@ -84,9 +84,9 @@ const u8 key_table[12] = {
     /* - 0 -*/ MSG_MUSIC_NEXT_EQ,      \
         /* - 1 -*/ MSG_MUSIC_PLAY,     \
         /* - 2 -*/ MSG_MUSIC_PAUSE,    \
-        /* - 3 -*/ NO_MSG,             \
-        /* - 4 -*/ MSG_NEXT_WORKMODE,  \
-        /* - 5 -*/ MSG_QUERY_NUMTOTAL, \
+        /* - 3 -*/ MSG_MUSIC_NEXT_FILE,             \
+        /* - 4 -*/ MSG_MUSIC_PAUSE,  \
+        /* - 5 -*/ MSG_MUSIC_PREV_FILE, \
         /* - 6 -*/ MSG_QUERY_CURNUM,   \
         /* - 7 -*/ MSG_QUERY_VOL,      \
         /* - 8 -*/ MSG_QUERY_EQ,       \
@@ -99,9 +99,9 @@ const u8 key_table[12] = {
     /* - 0 -*/ NO_MSG,         \
         /* - 1 -*/ NO_MSG,     \
         /* - 2 -*/ NO_MSG,     \
-        /* - 3 -*/ NO_MSG,     \
+        /* - 3 -*/ MSG_VOL_UP,     \
         /* - 4 -*/ NO_MSG,     \
-        /* - 5 -*/ NO_MSG,     \
+        /* - 5 -*/ MSG_VOL_DOWN,     \
         /* - 6 -*/ NO_MSG,     \
         /* - 7 -*/ NO_MSG,     \
         /* - 8 -*/ NO_MSG,     \
@@ -223,7 +223,7 @@ static u8 KeyScan(void)
         {
             temp = BTN_IS_PRESSED(g_key_value, i);
             //if (g_key_value == *ptr)
-              if(0 != temp)
+            if (0 != temp)
             {
                 g_key_value = i; //µÃµ½¼üÖµ
                 return i;
@@ -698,6 +698,7 @@ void MSG_Task(void)
         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
         DBG("MUSIC_PLAY\n");
         RGB_Refresh(COLOR_GREEN, LED_Num);
+        put_msg_lifo(MSG_VOL_INIT);
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PLAY");
         SysReturnTime = SYSRETURNTIME;
@@ -780,6 +781,7 @@ void MSG_Task(void)
         input_vol++;
     case MSG_VOL_DOWN:
         input_vol--;
+    case MSG_VOL_INIT:
         if (input_vol == 255)
         {
             input_vol = 0;
@@ -1121,4 +1123,3 @@ void Time_Task(void)
         }
     }
 }
-
