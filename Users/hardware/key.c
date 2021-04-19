@@ -70,7 +70,7 @@ const u8 key_table[12] = {
         /* - 1 -*/ MSG_1,               \
         /* - 2 -*/ MSG_2,               \
         /* - 3 -*/ MSG_VOL_UP,          \
-        /* - 4 -*/ MSG_MUSIC_PLAY,      \
+        /* - 4 -*/ MSG_MUSIC_SPECIAL_PLAY,      \
         /* - 5 -*/ MSG_VOL_DOWN,        \
         /* - 6 -*/ MSG_PLAYALL,         \
         /* - 7 -*/ MSG_SET_PLAYMODE,    \
@@ -80,33 +80,33 @@ const u8 key_table[12] = {
         /* - 11-*/ MSG_VOL_DOWN,
 
 //长按
-#define ADKEY_16KEY_MUSIC_LONG         \
-    /* - 0 -*/ MSG_MUSIC_NEXT_EQ,      \
-        /* - 1 -*/ MSG_MUSIC_PLAY,     \
-        /* - 2 -*/ MSG_MUSIC_PAUSE,    \
-        /* - 3 -*/ MSG_MUSIC_NEXT_FILE,             \
-        /* - 4 -*/ MSG_MUSIC_PAUSE,  \
+#define ADKEY_16KEY_MUSIC_LONG          \
+    /* - 0 -*/ MSG_MUSIC_NEXT_EQ,       \
+        /* - 1 -*/ MSG_MUSIC_PLAY,      \
+        /* - 2 -*/ MSG_MUSIC_PAUSE,     \
+        /* - 3 -*/ MSG_MUSIC_NEXT_FILE, \
+        /* - 4 -*/ MSG_MUSIC_PAUSE,     \
         /* - 5 -*/ MSG_MUSIC_PREV_FILE, \
-        /* - 6 -*/ MSG_QUERY_CURNUM,   \
-        /* - 7 -*/ MSG_QUERY_VOL,      \
-        /* - 8 -*/ MSG_QUERY_EQ,       \
-        /* - 9 -*/ MSG_QUERY_PLAYMODE, \
-        /* - 10-*/ MSG_TRIG_MODE,      \
+        /* - 6 -*/ MSG_QUERY_CURNUM,    \
+        /* - 7 -*/ MSG_QUERY_VOL,       \
+        /* - 8 -*/ MSG_QUERY_EQ,        \
+        /* - 9 -*/ MSG_QUERY_PLAYMODE,  \
+        /* - 10-*/ MSG_TRIG_MODE,       \
         /* - 11-*/ MSG_UART_ACK,
 
 //按着不松手
-#define ADKEY_16KEY_MUSIC_HOLD \
-    /* - 0 -*/ NO_MSG,         \
-        /* - 1 -*/ NO_MSG,     \
-        /* - 2 -*/ NO_MSG,     \
-        /* - 3 -*/ MSG_VOL_UP,     \
-        /* - 4 -*/ NO_MSG,     \
-        /* - 5 -*/ MSG_VOL_DOWN,     \
-        /* - 6 -*/ NO_MSG,     \
-        /* - 7 -*/ NO_MSG,     \
-        /* - 8 -*/ NO_MSG,     \
-        /* - 9 -*/ NO_MSG,     \
-        /* - 10-*/ NO_MSG,     \
+#define ADKEY_16KEY_MUSIC_HOLD   \
+    /* - 0 -*/ NO_MSG,           \
+        /* - 1 -*/ NO_MSG,       \
+        /* - 2 -*/ NO_MSG,       \
+        /* - 3 -*/ MSG_VOL_UP,   \
+        /* - 4 -*/ NO_MSG,       \
+        /* - 5 -*/ MSG_VOL_DOWN, \
+        /* - 6 -*/ NO_MSG,       \
+        /* - 7 -*/ NO_MSG,       \
+        /* - 8 -*/ NO_MSG,       \
+        /* - 9 -*/ NO_MSG,       \
+        /* - 10-*/ NO_MSG,       \
         /* - 11-*/ NO_MSG,
 
 //按键抬起
@@ -697,10 +697,17 @@ void MSG_Task(void)
     case MSG_MUSIC_PLAY:
         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
         DBG("MUSIC_PLAY\n");
-        RGB_Refresh(COLOR_GREEN, LED_Num);
-        put_msg_lifo(MSG_VOL_INIT);
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PLAY");
+        SysReturnTime = SYSRETURNTIME;
+        break;
+
+    case MSG_MUSIC_SPECIAL_PLAY:
+        Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
+        DBG("MUSIC_PLAY\n");
+        RGB_Refresh(COLOR_GREEN, LED_Num);
+        put_msg_lifo(MSG_VOL_INIT);
+
         SysReturnTime = SYSRETURNTIME;
         break;
         /*****************************************************
