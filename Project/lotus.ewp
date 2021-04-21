@@ -16,7 +16,7 @@
                 <debug>1</debug>
                 <option>
                     <name>GenDeviceSelectMenu</name>
-                    <state>STM8S103F3P	STM8S103F3P</state>
+                    <state>STM8S105K4	STM8S105K4</state>
                 </option>
                 <option>
                     <name>GenCodeModel</name>
@@ -188,7 +188,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
+                    <state>STM8S105</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1611,6 +1611,12 @@
     <group>
         <name>driver</name>
         <file>
+            <name>$PROJ_DIR$\..\Users\driver\ColorConvert.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\driver\ColorConvert.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Users\driver\iwdg.c</name>
         </file>
         <file>
@@ -1624,6 +1630,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Users\hardware\key.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\hardware\LedSync.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\hardware\LedSync.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Users\hardware\Mp3Module.c</name>
@@ -1646,7 +1658,7 @@
                 <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_tim4.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_uart1.c</name>
+                <name>$PROJ_DIR$\..\STM8S_StdPeriph_Driver\src\stm8s_uart2.c</name>
             </file>
         </group>
     </group>

@@ -9,6 +9,7 @@
 #include "LCD1602.h"
 #include "WS2812B.h"
 #include "MSG.h"
+#include "LedSync.h"
 
 #define DEBUG
 // #define UARTREAD

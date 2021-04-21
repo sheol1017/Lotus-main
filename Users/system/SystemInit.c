@@ -70,6 +70,8 @@ void System_Init(void)
 
 	/* led init ---------------------------------------------------*/
 	Ws2812b_Configuration();
+	LS_Init(); // Testing
+
 	itoa1(0);
 	itoa2(0);
 	itoa3(0);
@@ -82,7 +84,7 @@ void System_Init(void)
 
 #ifdef DEBUG
 	OnlineDevice = 0x02;
-	put_msg_lifo(MSG_RETURN_MINIT);	
+	put_msg_lifo(MSG_RETURN_MINIT);
 #endif // DEBUG
 }
 

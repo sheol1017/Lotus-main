@@ -45,7 +45,7 @@
  /* #define STM8S005 */      /*!< STM8S Value Line Medium density devices */
  /* #define STM8AF626x */    /*!< STM8A Medium density devices */
  /* #define STM8AF622x */    /*!< STM8A Low density devices */
- #define STM8S103 */      /*!< STM8S Low density devices */
+ /* #define STM8S103 */      /*!< STM8S Low density devices */
  /* #define STM8S003  */      /*!< STM8S Value Line Low density devices */
  /* #define STM8S903 */      /*!< STM8S Low density devices */
  /* #define STM8S001 */      /*!< STM8S Value Line Low denisty devices */
@@ -2560,9 +2560,9 @@ CFG_TypeDef;
 #define GPIOD_BaseAddress       0x500F
 #define GPIOE_BaseAddress       0x5014
 #define GPIOF_BaseAddress       0x5019
-//#define GPIOG_BaseAddress       0x501E
-//#define GPIOH_BaseAddress       0x5023
-//#define GPIOI_BaseAddress       0x5028
+#define GPIOG_BaseAddress       0x501E
+#define GPIOH_BaseAddress       0x5023
+#define GPIOI_BaseAddress       0x5028
 #define FLASH_BaseAddress       0x505A
 #define EXTI_BaseAddress        0x50A0
 #define RST_BaseAddress         0x50B3
@@ -2574,17 +2574,17 @@ CFG_TypeDef;
 #define SPI_BaseAddress         0x5200
 #define I2C_BaseAddress         0x5210
 #define UART1_BaseAddress       0x5230
-//#define UART2_BaseAddress       0x5240
-//#define UART3_BaseAddress       0x5240
-//#define UART4_BaseAddress       0x5230
+#define UART2_BaseAddress       0x5240
+#define UART3_BaseAddress       0x5240
+#define UART4_BaseAddress       0x5230
 #define TIM1_BaseAddress        0x5250
 #define TIM2_BaseAddress        0x5300
-//#define TIM3_BaseAddress        0x5320
+#define TIM3_BaseAddress        0x5320
 #define TIM4_BaseAddress        0x5340
-//#define TIM5_BaseAddress        0x5300
-//#define TIM6_BaseAddress        0x5340
+#define TIM5_BaseAddress        0x5300
+#define TIM6_BaseAddress        0x5340
 #define ADC1_BaseAddress        0x53E0
-//#define ADC2_BaseAddress        0x5400
+#define ADC2_BaseAddress        0x5400
 #define CAN_BaseAddress         0x5420
 #define CFG_BaseAddress         0x7F60
 #define ITC_BaseAddress         0x7F70

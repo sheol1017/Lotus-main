@@ -705,7 +705,7 @@ void MSG_Task(void)
     case MSG_MUSIC_SPECIAL_PLAY:
         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
         DBG("MUSIC_PLAY\n");
-        RGB_Refresh(COLOR_GREEN, LED_Num);
+        //RGB_Refresh(COLOR_GREEN, LED_Num);
         put_msg_lifo(MSG_VOL_INIT);
 
         SysReturnTime = SYSRETURNTIME;

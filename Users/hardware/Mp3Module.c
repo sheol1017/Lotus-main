@@ -37,30 +37,30 @@ void MP3_Init(void);
 ********************************************************************************************/
 void MP3_Init(void)
 {
-    // init uart1
+    // init UART2
     Uart_Init();
 
-    // config uart1
+    // config UART2
     // baud rate: 9600 bps
     // data bit: 8
     // stop bit: 1
     // No Parity
     // sync mode disbled
     // Rx and Tx are enabled
-    Uart_ParameterConfig(9600, UART1_WORDLENGTH_8D, UART1_STOPBITS_1,
-                         UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE,
-                         UART1_MODE_TXRX_ENABLE);
+    Uart_ParameterConfig(9600, UART2_WORDLENGTH_8D, UART2_STOPBITS_1,
+                         UART2_PARITY_NO, UART2_SYNCMODE_CLOCK_DISABLE,
+                         UART2_MODE_TXRX_ENABLE);
 
     // disable uart interrupt
-    // UART_InterruptConfig(UART1_IT_TXE,DISABLE);
+    // UART_InterruptConfig(UART2_IT_TXE,DISABLE);
     
     #ifdef UARTREAD
-    UART1_ITConfig(UART1_IT_RXNE_OR, ENABLE);
+    UART2_ITConfig(UART2_IT_RXNE_OR, ENABLE);
     #else
-    UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE);
+    UART2_ITConfig(UART2_IT_RXNE_OR, DISABLE);
     #endif // UARTREAD
-    // UART1_ITConfig(UART1_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
-    UART1_ITConfig(UART1_IT_TXE, DISABLE);
+    // UART2_ITConfig(UART2_IT_RXNE_OR, DISABLE); //should disable otherwise death of read
+    UART2_ITConfig(UART2_IT_TXE, DISABLE);
     // Enable uart
     Uart_Enable(ENABLE);
 
@@ -89,7 +89,7 @@ void Uart_PutByte(u8 ch)
     // TI = 0;
 
     Uart_SendData(ch);
-    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+    while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET)
         ;
     //Uart_Enable(DISABLE);
 }
@@ -176,12 +176,12 @@ void SendCmd(u8 len, bool flag, u8 time)
 void Uart_ReadByte_RX_IRQ()
 {
     u8 UartTemp = 0;
-    if (UART1_GetFlagStatus(UART1_FLAG_RXNE))
+    if (UART2_GetFlagStatus(UART2_FLAG_RXNE))
     {
         // RI = 0;
         // UartTemp  = SBUF;
-        UART1_ClearITPendingBit(UART1_IT_RXNE);
-        UartTemp = UART1_ReceiveData9();
+        UART2_ClearITPendingBit(UART2_IT_RXNE);
+        UartTemp = UART2_ReceiveData9();
 
         if (Busy_Flag)
         {

@@ -193,9 +193,9 @@ static void Ws2812b_WriteByte(u8 color)
 void Ws2812b_Write(u32 color)
 {
 #if 0
-    Ws2812b_WriteByte(BYTE_1(color));//green
-    Ws2812b_WriteByte(BYTE_2(color));//red
-    Ws2812b_WriteByte(BYTE_0(color));//blue
+    // Ws2812b_WriteByte(BYTE_1(color));//green
+    // Ws2812b_WriteByte(BYTE_2(color));//red
+    // Ws2812b_WriteByte(BYTE_0(color));//blue
 #else
 /*同理*/    
     //green
@@ -498,6 +498,7 @@ void RGB_Refresh(u32 color,u8 num){
 //color:颜色（包含亮度）
 //num  :总共的led数量
 //speed:延时（单位ms）
+#if 0  // Reduce flash size
 void RGB_Cycle(u32 color,u8 num,u16 speed)
 {
 	u8 i;
@@ -565,5 +566,6 @@ void RGB_Flash(u32 color,u8 num,u16 speed,u8 cnt)
 		Delay_ms(speed);
 	}
 }
+#endif // #if 0  // Reduce flash size
  
 /*********************************************END OF FILE**********************************************/

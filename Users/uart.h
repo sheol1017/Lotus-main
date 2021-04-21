@@ -9,12 +9,12 @@
 
 
 void Uart_Init(void);
-void Uart_ParameterConfig(uint32_t BaudRate, UART1_WordLength_TypeDef WordLength, 
-                UART1_StopBits_TypeDef StopBits, UART1_Parity_TypeDef Parity, 
-                UART1_SyncMode_TypeDef SyncMode, UART1_Mode_TypeDef Mode);
+void Uart_ParameterConfig(uint32_t BaudRate, UART2_WordLength_TypeDef WordLength, 
+                UART2_StopBits_TypeDef StopBits, UART2_Parity_TypeDef Parity, 
+                UART2_SyncMode_TypeDef SyncMode, UART2_Mode_TypeDef Mode);
 void Uart_Enable(FunctionalState NewState);
-void UART_InterruptConfig(UART1_IT_TypeDef UART1_IT, FunctionalState NewState);
-FlagStatus UART_GetFlagStatus(UART1_Flag_TypeDef UART1_FLAG);
+void UART_InterruptConfig(UART2_IT_TypeDef UART2_IT, FunctionalState NewState);
+FlagStatus UART_GetFlagStatus(UART2_Flag_TypeDef UART2_FLAG);
 
 void Uart_SendData(uint8_t Data);
 uint8_t Uart_ReadData(void);
