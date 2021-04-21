@@ -69,7 +69,7 @@ void System_Init(void)
 	MP3_Init();
 
 	/* led init ---------------------------------------------------*/
-	Ws2812b_Configuration();
+	Ws2812b_Init();
 	LS_Init(); // Testing
 
 	itoa1(0);

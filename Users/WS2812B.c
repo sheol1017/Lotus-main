@@ -1,13 +1,13 @@
 #include "WS2812B.h"
 #include "timebase.h"
- 
+
 /*
 此代码针对stm8s003平台 @16M
 灯的性质决定，需要一次性刷新，比如16个灯就必须一次性刷新16个，
 而不能一个一个中间有间隔的刷新，这样就只有一地个灯亮，
 如果需要花样把不需要亮的灯设置为不亮0x000000即可
 */
- 
+
 /*以下定义如果没有需要自行定义*/
 //#define BYTE_0(n)                 ((u8)((n) & (u8)0xFF))        /*!< Returns the low color of the 32-bit value */
 //#define BYTE_1(n)                 ((u8)(BYTE_0((n) >> (u8)8)))  /*!< Returns the second color of the 32-bit value */
@@ -15,34 +15,68 @@
 //#define BYTE_3(n)                 ((u8)(BYTE_0((n) >> (u8)24)))
 //#define enableInterrupts()	EA=1
 //#define disableInterrupts()	EA=0
- 
+
 //根据平台定义
 #define _nop_() asm("nop")
- 
-#define delay1NOP()	_nop_();
-#define delay2NOP()	delay1NOP();_nop_();
-#define delay3NOP()	delay2NOP();_nop_();
-#define	delay4NOP()	delay3NOP();_nop_();
-#define	delay5NOP()	delay4NOP();_nop_();
-#define	delay6NOP()	delay5NOP();_nop_();
-#define	delay7NOP()	delay6NOP();_nop_();
-#define	delay8NOP()	delay7NOP();_nop_();
-#define	delay9NOP()	delay8NOP();_nop_();
-#define	delay10NOP()	delay9NOP();_nop_();
-#define	delay11NOP()	delay10NOP();_nop_();
-#define	delay12NOP()	delay11NOP();_nop_();
-#define	delay13NOP()	delay12NOP();_nop_();
-#define	delay14NOP()	delay13NOP();_nop_();
-#define	delay15NOP()	delay14NOP();_nop_();
- 
+
+#define delay1NOP() _nop_();
+#define delay2NOP() \
+    delay1NOP();    \
+    _nop_();
+#define delay3NOP() \
+    delay2NOP();    \
+    _nop_();
+#define delay4NOP() \
+    delay3NOP();    \
+    _nop_();
+#define delay5NOP() \
+    delay4NOP();    \
+    _nop_();
+#define delay6NOP() \
+    delay5NOP();    \
+    _nop_();
+#define delay7NOP() \
+    delay6NOP();    \
+    _nop_();
+#define delay8NOP() \
+    delay7NOP();    \
+    _nop_();
+#define delay9NOP() \
+    delay8NOP();    \
+    _nop_();
+#define delay10NOP() \
+    delay9NOP();     \
+    _nop_();
+#define delay11NOP() \
+    delay10NOP();    \
+    _nop_();
+#define delay12NOP() \
+    delay11NOP();    \
+    _nop_();
+#define delay13NOP() \
+    delay12NOP();    \
+    _nop_();
+#define delay14NOP() \
+    delay13NOP();    \
+    _nop_();
+#define delay15NOP() \
+    delay14NOP();    \
+    _nop_();
+
 //引脚
-#define RGB_PIN_H() GPIOD->ODR |= (uint8_t)GPIO_PIN_3;
-#define RGB_PIN_L() GPIOD->ODR &= (uint8_t)(~GPIO_PIN_3)
- 
+#define RGB_PIN_H() GPIOB->ODR |= (uint8_t)GPIO_PIN_0;
+#define RGB_PIN_L() GPIOB->ODR &= (uint8_t)(~GPIO_PIN_0)
+
 void Ws2812b_Configuration(void)
 {
-    GPIO_Init(GPIOD, (GPIO_Pin_TypeDef)GPIO_PIN_3, GPIO_MODE_OUT_PP_HIGH_FAST);
+    GPIO_Init(GPIOB, (GPIO_Pin_TypeDef)GPIO_PIN_0, GPIO_MODE_OUT_PP_HIGH_FAST);
     RGB_PIN_L();
+}
+
+void Ws2812b_Init(void)
+{
+    Ws2812b_Configuration();
+    RGB_Refresh(COLOR_BLACK,LED_Max_Num);
 }
 #if 0
 static void Ws2812b_Write0(void)
@@ -99,96 +133,112 @@ static void Ws2812b_WriteByte(u8 color)
 /*程序进出都需要耗时的，用下面的方法替代上面更佳*/
 static void Ws2812b_WriteByte(u8 color)
 {
-	if(color & 0x80){
+    if (color & 0x80)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-    if(color & 0x40){
+    }
+    if (color & 0x40)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x20){
+    }
+    if (color & 0x20)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x10){
+    }
+    if (color & 0x10)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x8) {
+    }
+    if (color & 0x8)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x4) {
+    }
+    if (color & 0x4)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x2) {
+    }
+    if (color & 0x2)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x1) {
+    }
+    if (color & 0x1)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
+    }
 }
- 
+
 #endif
 void Ws2812b_Write(u32 color)
 {
@@ -197,282 +247,330 @@ void Ws2812b_Write(u32 color)
     // Ws2812b_WriteByte(BYTE_2(color));//red
     // Ws2812b_WriteByte(BYTE_0(color));//blue
 #else
-/*同理*/    
+    /*同理*/
     //green
-	if(color & 0x8000){
+    if (color & 0x8000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-    if(color & 0x4000){
+    }
+    if (color & 0x4000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x2000){
+    }
+    if (color & 0x2000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x1000){
+    }
+    if (color & 0x1000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x800) {
+    }
+    if (color & 0x800)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x400) {
+    }
+    if (color & 0x400)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x200) {
+    }
+    if (color & 0x200)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x100) {
+    }
+    if (color & 0x100)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
     }
     //red
-	if(color & 0x800000){
+    if (color & 0x800000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-    if(color & 0x400000){
+    }
+    if (color & 0x400000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x200000){
+    }
+    if (color & 0x200000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x100000){
+    }
+    if (color & 0x100000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x80000) {
+    }
+    if (color & 0x80000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x40000) {
+    }
+    if (color & 0x40000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x20000) {
+    }
+    if (color & 0x20000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x10000) {
+    }
+    if (color & 0x10000)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
     }
     //blue
-	if(color & 0x80){
+    if (color & 0x80)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-    if(color & 0x40){
+    }
+    if (color & 0x40)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x20){
+    }
+    if (color & 0x20)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x10){
+    }
+    if (color & 0x10)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x8) {
+    }
+    if (color & 0x8)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x4) {
+    }
+    if (color & 0x4)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x2) {
+    }
+    if (color & 0x2)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay7NOP();
-    }	
-	if(color & 0x1) {
+    }
+    if (color & 0x1)
+    {
         RGB_PIN_H();
         delay12NOP();
         RGB_PIN_L();
     }
-	else{      
+    else
+    {
         RGB_PIN_H();
         delay6NOP();
         RGB_PIN_L();
         delay2NOP();
         /*程序进出会有延时*/
         //delay7NOP();
-    }    
+    }
 #endif
 }
 
 static void Delay_ms(u8 speed)
 {
-    while(speed)
+    while (speed)
     {
         if (TimeBase_Get1msSystemTimeDelta())
         {
@@ -480,20 +578,22 @@ static void Delay_ms(u8 speed)
         }
     }
 }
- 
+
 /*********************************************以上为底层***********************************************/
- 
+
 //设置灯的颜色
 //color:颜色（包含亮度）
 //num  :总共的led数量
-void RGB_Refresh(u32 color,u8 num){
-	disableInterrupts();//关闭所有中断避免打扰
-	while(num--){
-		Ws2812b_Write(color);
-	}
-	enableInterrupts();
+void RGB_Refresh(u32 color, u8 num)
+{
+    disableInterrupts(); //关闭所有中断避免打扰
+    while (num--)
+    {
+        Ws2812b_Write(color);
+    }
+    enableInterrupts();
 }
- 
+
 //颜色流水灯
 //color:颜色（包含亮度）
 //num  :总共的led数量
@@ -567,5 +667,5 @@ void RGB_Flash(u32 color,u8 num,u16 speed,u8 cnt)
 	}
 }
 #endif // #if 0  // Reduce flash size
- 
+
 /*********************************************END OF FILE**********************************************/

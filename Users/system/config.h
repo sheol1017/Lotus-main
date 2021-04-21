@@ -3,6 +3,7 @@
 
 #include "stm8s.h"
 #include "key.h"
+#include "extendkeys.h"
 #include "mylib.h"
 #include "SystemInit.h"
 #include "Mp3Module.h"
@@ -11,8 +12,9 @@
 #include "MSG.h"
 #include "LedSync.h"
 
-#define DEBUG
-// #define UARTREAD
+
+// #define DEBUG
+#define UARTREAD
 
 #define VER 0x10
 

@@ -173,7 +173,7 @@ void SendCmd(u8 len, bool flag, u8 time)
  - 返回说明：
  - 注：	    串口接收是采用状态机的方式
 *******************************************************************************************/
-void Uart_ReadByte_RX_IRQ()
+void Uart_ReadByte_RX_IRQ(void)
 {
     u8 UartTemp = 0;
     if (UART2_GetFlagStatus(UART2_FLAG_RXNE))

@@ -87,7 +87,7 @@ const uint16_t index_wave[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 
 void LS_Init(void)
 {
-    rgb2hsv(255,0,0,&h_bak,&s_bak,&v_bak);
+    rgb2hsv(r,g,b,&h,&s,&v);
 }
 
 

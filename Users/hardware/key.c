@@ -66,9 +66,9 @@ const u8 key_table[12] = {
     0xE7, 0xD7, 0xB7, 0x77};
 //短按
 #define ADKEY_16KEY_MUSIC_SHORT         \
-    /* - 0 -*/ MSG_0,                   \
-        /* - 1 -*/ MSG_1,               \
-        /* - 2 -*/ MSG_2,               \
+    /* - 0 -*/ MSG_MUSIC_SPECIAL_PLAY,                   \
+        /* - 1 -*/ MSG_VOL_UP,               \
+        /* - 2 -*/ MSG_VOL_DOWN,               \
         /* - 3 -*/ MSG_VOL_UP,          \
         /* - 4 -*/ MSG_MUSIC_SPECIAL_PLAY,      \
         /* - 5 -*/ MSG_VOL_DOWN,        \
@@ -81,9 +81,9 @@ const u8 key_table[12] = {
 
 //长按
 #define ADKEY_16KEY_MUSIC_LONG          \
-    /* - 0 -*/ MSG_MUSIC_NEXT_EQ,       \
-        /* - 1 -*/ MSG_MUSIC_PLAY,      \
-        /* - 2 -*/ MSG_MUSIC_PAUSE,     \
+    /* - 0 -*/ MSG_MUSIC_PAUSE,       \
+        /* - 1 -*/ MSG_MUSIC_NEXT_FILE,      \
+        /* - 2 -*/ MSG_MUSIC_PREV_FILE,     \
         /* - 3 -*/ MSG_MUSIC_NEXT_FILE, \
         /* - 4 -*/ MSG_MUSIC_PAUSE,     \
         /* - 5 -*/ MSG_MUSIC_PREV_FILE, \
@@ -97,11 +97,11 @@ const u8 key_table[12] = {
 //按着不松手
 #define ADKEY_16KEY_MUSIC_HOLD   \
     /* - 0 -*/ NO_MSG,           \
-        /* - 1 -*/ NO_MSG,       \
-        /* - 2 -*/ NO_MSG,       \
-        /* - 3 -*/ MSG_VOL_UP,   \
+        /* - 1 -*/ MSG_VOL_UP,       \
+        /* - 2 -*/ MSG_VOL_DOWN,       \
+        /* - 3 -*/ NO_MSG,   \
         /* - 4 -*/ NO_MSG,       \
-        /* - 5 -*/ MSG_VOL_DOWN, \
+        /* - 5 -*/ NO_MSG, \
         /* - 6 -*/ NO_MSG,       \
         /* - 7 -*/ NO_MSG,       \
         /* - 8 -*/ NO_MSG,       \
@@ -138,12 +138,14 @@ void DispModlueError(u8 error);
 
 void Key_Init(void)
 {
-    GPIO_Init(GPIOC, GPIO_PIN_3, GPIO_MODE_IN_PU_NO_IT);
+    //GPIO_Init(GPIOC, GPIO_PIN_3, GPIO_MODE_IN_PU_NO_IT);
     // GPIO_ReadInputPin(GPIOC, GPIO_PIN_2);
-    GPIO_Init(GPIOC, GPIO_PIN_4, GPIO_MODE_IN_PU_NO_IT);
+    //GPIO_Init(GPIOC, GPIO_PIN_4, GPIO_MODE_IN_PU_NO_IT);
     // GPIO_ReadInputPin(GPIOC, GPIO_PIN_3);
-    GPIO_Init(GPIOC, GPIO_PIN_5, GPIO_MODE_IN_PU_NO_IT);
+    //GPIO_Init(GPIOC, GPIO_PIN_5, GPIO_MODE_IN_PU_NO_IT);
     // GPIO_ReadInputPin(GPIOC, GPIO_PIN_4);
+
+    ExtendKey_Init();
 }
 /*****************************************************************************************************
  - 功能描述： 将消息存入消息池
@@ -212,12 +214,14 @@ static u8 KeyScan(void)
     static u8 g_key_value;
 
     // KEYIO   = 0x0f;
-    temp = KEYIO & KEY_Port;
-    temp = temp | (~KEY_Port);
-    if (temp != 0xff) //有键盘输入
+    temp |= (Read_Extend_Key(EXTEND_KEY_POWER) << USER_BUTTON_ExtendPower);
+    temp |= (Read_Extend_Key(EXTEND_KEY_MINUS) << USER_BUTTON_ExtendUp);
+    temp |= (Read_Extend_Key(EXTEND_KEY_PLUS) << USER_BUTTON_ExtendDown);
+
+    if (temp & 0x07) //有键盘输入
     {
-        // KEYIO = 0xf0;
-        g_key_value = ~temp; //得到键值
+
+        g_key_value = temp; //得到键值
 
         for (i = 0, ptr = key_table; i < 13; i++, ptr++) //查键值
         {

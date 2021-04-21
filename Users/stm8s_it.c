@@ -37,6 +37,7 @@
 // #include "beep.h"
 // #include "knobs.h"
 
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -346,9 +347,7 @@ INTERRUPT_HANDLER(UART1_RX_IRQHandler, 18)
   /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
-#ifdef UARTREAD
-  Uart_ReadByte_RX_IRQ();
-#endif // UARTREAD
+
 }
 #endif /*STM8S208 or STM8S207 or STM8S103 or STM8S001 or STM8S903 or STM8AF62Ax or STM8AF52Ax */
 
@@ -386,6 +385,10 @@ INTERRUPT_HANDLER(UART2_RX_IRQHandler, 21)
   /* In order to detect unexpected events during development,
        it is recommended to set a breakpoint on the following instruction.
     */
+  
+#ifdef UARTREAD
+  Uart_ReadByte_RX_IRQ();
+#endif // UARTREAD
 }
 #endif /* STM8S105 or STM8AF626x */
 

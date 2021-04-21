@@ -81,9 +81,18 @@ enum
     KEY_LONG_UP,
 };
 
-#define KEYIO GPIO_ReadInputData(GPIOC)
-#define KEY_Port 0x38  //PC3 PC4 PC5
-#define NO_KEY 0xff
+// #define KEYIO GPIO_ReadInputData(GPIOC)
+// #define KEY_Port 0x38  //PC3 PC4 PC5
+// #define NO_KEY 0xff
+
+typedef enum
+{
+  USER_BUTTON_ExtendPower,  
+  USER_BUTTON_ExtendUp,
+  USER_BUTTON_ExtendDown,
+  USER_BUTTON_MAX,
+  NO_KEY = 0XFF
+} user_button_t;
 
 enum
 {

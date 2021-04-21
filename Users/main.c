@@ -123,8 +123,12 @@ void main(void)
 
     TimeBase_HandleTimeBaseCouter(); // Timebase reset
 
-    ColorWave();
-#ifdef 0
+    // ColorWave();
+    if (TimeBase_Get1sSystemTimeDelta())
+    {
+      RGB_Refresh(COLOR_BLACK,LED_Num);
+    }
+    
 
 
     if (TimeBase_Get1msSystemTimeDelta())
@@ -140,7 +144,7 @@ void main(void)
     DS10MS_CNT();
     DS100MS_CNT();
     DS500MS_CNT();
-    #endif // 0
+
   }
   /*
   //debug

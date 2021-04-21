@@ -2115,6 +2115,9 @@
     <group>
         <name>hardware</name>
         <file>
+            <name>$PROJ_DIR$\..\Users\hardware\extendkeys.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Users\hardware\key.c</name>
         </file>
         <file>
@@ -2128,6 +2131,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Users\hardware\Mp3Module.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\hardware\Mp3Module.h</name>
         </file>
     </group>
     <group>
