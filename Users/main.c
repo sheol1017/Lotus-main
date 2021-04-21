@@ -43,6 +43,7 @@ uint16_t Conversion_Value = 0;
 static u8 ucTestCounter;
 static u8 counter1ms = 0;
 static bool bplayed;
+static u32 colortest = COLOR_BLACK;
 // enum errorcode error = NOERROR;
 /* Private function prototypes -----------------------------------------------*/
 // static void ADC_Config(void);
@@ -96,7 +97,7 @@ static void CLK_Config(void)
 void main(void)
 {
   /* Disable general interrupts -----------------------------------------*/
-  disableInterrupts();
+   disableInterrupts();
 
   /* Clock configuration -----------------------------------------*/
   CLK_Config();
@@ -123,13 +124,10 @@ void main(void)
 
     TimeBase_HandleTimeBaseCouter(); // Timebase reset
 
-    // ColorWave();
-    if (TimeBase_Get1sSystemTimeDelta())
-    {
-      RGB_Refresh(COLOR_BLACK,LED_Num);
-    }
+    ColorWave();
+   
+    BuddistColor_Handler();
     
-
 
     if (TimeBase_Get1msSystemTimeDelta())
       counter1ms++;
@@ -139,12 +137,11 @@ void main(void)
       counter1ms = 0;
       System_Flag_2Ms = 1;
     }
-    
+
     DS2MS_CNT();
     DS10MS_CNT();
     DS100MS_CNT();
     DS500MS_CNT();
-
   }
   /*
   //debug
@@ -187,7 +184,6 @@ void main(void)
       ucTestCounter = 0;
     }
 */
-
 }
 
 #ifdef USE_FULL_ASSERT

@@ -2111,6 +2111,12 @@
         <file>
             <name>$PROJ_DIR$\..\Users\driver\iwdg.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\driver\WS2812B.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Users\driver\WS2812B.h</name>
+        </file>
     </group>
     <group>
         <name>hardware</name>
@@ -2197,9 +2203,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Users\uart.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Users\WS2812B.c</name>
         </file>
     </group>
 </project>

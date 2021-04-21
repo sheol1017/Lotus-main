@@ -11,13 +11,13 @@
 #ifndef __LED_SYNC__
 #define __LED_SYNC__
 
+#include "stm8s.h"
+#include "config.h"
+
+
 
 void LS_Init(void);
 void ColorWave(void);
-
-
-
-
-
-
+void ColorChange(u32 ulRGB);
+void BuddistColor_Handler(void); //100ms running
 #endif // __LED_SYNC__

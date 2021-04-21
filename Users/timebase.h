@@ -12,7 +12,7 @@ void TimeBase_HandleTimeBaseCouter(void);
 //
 u8 TimeBase_Get1msSystemTimeDelta(void);
 u8 TimeBase_Get10msSystemTimeDelta(void);
-u8 TimeBase_Get250msSystemTimeDelta(void);
+u8 TimeBase_Get100msSystemTimeDelta(void);
 u8 TimeBase_Get1sSystemTimeDelta(void);
 
 

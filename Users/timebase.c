@@ -43,7 +43,7 @@ static __IO u8 ucSystemTime;
 //
 static __IO u8 uc1msSystemTimeDelta;
 static __IO u8 uc10msSystemTimeDelta;
-static __IO u8 uc250msSystemTimeDelta;
+static __IO u8 uc100msSystemTimeDelta;
 static __IO u8 uc1sSystemTimeDelta;
 
 
@@ -120,14 +120,14 @@ void TimeBase_IncerementCounter_UPD_IRQ(void){
 void TimeBase_HandleTimeBaseCouter(void){
     static u8 uc1msBaseTime;
     static u8 uc10msBaseTime;
-    static u16 ui250msBaseTime;
+    static u16 ui100msBaseTime;
     static u16 ui1sBaseTime;
     //
     if( ucSystemTime != 0 )
     {
       uc1msBaseTime++;
       uc10msBaseTime++;
-      ui250msBaseTime++;
+      ui100msBaseTime++;
       ui1sBaseTime++;
       ucSystemTime--;
     }
@@ -146,11 +146,11 @@ void TimeBase_HandleTimeBaseCouter(void){
       uc10msSystemTimeDelta = 1;
     }
     
-    uc250msSystemTimeDelta = 0;
-    if( ui250msBaseTime >= 250 )
+    uc100msSystemTimeDelta = 0;
+    if( ui100msBaseTime >= 100 )
     {
-      ui250msBaseTime -= 250;
-      uc250msSystemTimeDelta = 1;
+      ui100msBaseTime -= 100;
+      uc100msSystemTimeDelta = 1;
     }
     
     uc1sSystemTimeDelta = 0;
@@ -170,8 +170,8 @@ u8 TimeBase_Get10msSystemTimeDelta(void){
   return uc10msSystemTimeDelta;
 }
     
-u8 TimeBase_Get250msSystemTimeDelta(void){
-  return uc250msSystemTimeDelta;
+u8 TimeBase_Get100msSystemTimeDelta(void){
+  return uc100msSystemTimeDelta;
 }
 
 u8 TimeBase_Get1sSystemTimeDelta(void){

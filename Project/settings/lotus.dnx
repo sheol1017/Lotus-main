@@ -49,7 +49,7 @@
         <MultiCoreRunAll>1</MultiCoreRunAll>
     </Simulator>
     <DebugChecksum>
-        <Checksum>2527746104</Checksum>
+        <Checksum>3899371771</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -60,10 +60,18 @@
     <Disassembly>
         <MixedMode>1</MixedMode>
     </Disassembly>
+    <struct_types>
+        <Fmt0>tColocycle-ulcolordata	4	0</Fmt0>
+    </struct_types>
+    <array_types>
+        <Fmt0>u8[4]	4	0</Fmt0>
+    </array_types>
     <watch_formats>
-        <Fmt0>{W}1:g_key_value	1	0</Fmt0>
-        <Fmt1>{W}1:input_vol	3	0</Fmt1>
-        <Fmt2>{W}1:temp	1	0</Fmt2>
+        <Fmt0>{W}1:color	4	0</Fmt0>
+        <Fmt1>{W}1:g_key_value	1	0</Fmt1>
+        <Fmt2>{W}1:input_vol	3	0</Fmt2>
+        <Fmt3>{W}1:temp	1	0</Fmt3>
+        <Fmt4>{W}1:ulRGB	4	0</Fmt4>
     </watch_formats>
     <DataSample>
         <LogEnabled>0</LogEnabled>
@@ -74,8 +82,10 @@
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\..\Users\uart.h}.4.19" 0 0 0 0 "" 0 ""</Bp0>
         <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Users\main.c}.1.1" 0 0 0 0 "" 0 ""</Bp1>
         <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\Users\system\FIFOManage.c}.13.8" 0 0 0 0 "" 0 ""</Bp2>
-        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\Users\main.c}.191.1" 1 0 0 0 "" 0 ""</Bp3>
-        <Count>4</Count>
+        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\Users\main.c}.207.2" 0 0 0 0 "" 0 ""</Bp3>
+        <Bp4>_ "STD_CODE" "{$PROJ_DIR$\..\Users\hardware\LedSync.c}.133.1" 0 0 0 0 "" 0 ""</Bp4>
+        <Bp5>_ "STD_CODE" "{$PROJ_DIR$\..\Users\hardware\LedSync.c}.168.4" 0 0 0 0 "" 0 ""</Bp5>
+        <Count>6</Count>
     </Breakpoints>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
