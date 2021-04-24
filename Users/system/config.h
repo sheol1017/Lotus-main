@@ -17,7 +17,8 @@
 #define UARTREAD
 
 #define VER 0x10
-
+#define true TRUE 
+#define false FALSE 
 /**********************************************************
                     系统调试相关设置
  - 、通过将FUNC_UARTDBG_EN这条宏设置为0或者1，来选择

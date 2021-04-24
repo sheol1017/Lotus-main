@@ -100,26 +100,68 @@ const u32 index_color_loop[] = {COLOR_WHITESMOKE,
 
 #define index_color_dely_time 1u, 1u, 1u, 1u
 
-#define index_a_char_time 20u, 30u, 20u, 20u
-#define index_a_wait_time 5u, 2u, 2u, 5u
+//增加每个字一光
+//5色光颜色
+#define index_COLOR_WHITE COLOR_WHITE
+#define index_COLOR_RED COLOR_RED
+#define index_COLOR_BLUE COLOR_BLUE
+#define index_COLOR_YELLOW COLOR_YELLOW
+#define index_COLOR_GREEN COLOR_GREEN
 
-#define index_4_chars_time index_a_char_time, index_a_wait_time
-
-#define index2_a_char_time 20u, 30u, 20u, 20u
-#define index2_a_wait_time 5u, 2u, 2u, 5u
-
-#define index2_4_chars_time index2_a_char_time, index2_a_wait_time
-
+//阿弥陀佛 每声时间
+#define INDEX_AMITUOFO1_TIME \
+    {                        \
+        20u, 30u, 20u, 20u   \
+    }
+#define INDEX_AMITUOFO2_TIME \
+    {                        \
+        30u, 30u, 20u, 20u   \
+    }
+#define INDEX_AMITUOFO3_TIME \
+    {                        \
+        40u, 30u, 20u, 20u   \
+    }
+#define INDEX_AMITUOFO4_TIME \
+    {                        \
+        50u, 30u, 20u, 20u   \
+    }
+//四声间隔
+#define INDEX_AMITUOFOWAITTIME \
+    {                          \
+        5u, 2u, 2u, 5u         \
+    }
+// 两个四声间隔
+#define INDEX_2_AMITUOFOWAITTIME \
+    {                            \
+        5u, 2u                   \
+    }
+// 每个光的间隔
 #define index_white_dely_time 5u
 #define index_red_dely_time 5u
 #define index_blue_dely_time 3u
 #define index_glod_dely_time 3u
 #define index_green_dely_time 4u
+#define LOOPNOTFINISH FALSE
 
-#define index_white_data COLOR_WHITE,           \
-                         index_white_loop_time, \
-                         index_color_dely_time, \
-                         index_white_dely_time
+#define index_4_AMITUOFO_time INDEX_AMITUOFO1_TIME, \
+                              INDEX_AMITUOFO2_TIME, \
+                              INDEX_AMITUOFO3_TIME, \
+                              INDEX_AMITUOFO4_TIME
+
+#define index_2_4AMITUOFO_time                                         \
+    {{index_4_AMITUOFO_time}, INDEX_AMITUOFOWAITTIME, LOOPNOTFINISH},  \
+    {                                                                  \
+        {index_4_AMITUOFO_time}, INDEX_AMITUOFOWAITTIME, LOOPNOTFINISH \
+    }
+
+#define index_color_data                                                                                               \
+    {index_COLOR_WHITE, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_white_dely_time, LOOPNOTFINISH},     \
+        {index_COLOR_RED, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_red_dely_time, LOOPNOTFINISH},     \
+        {index_COLOR_BLUE, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_blue_dely_time, LOOPNOTFINISH},   \
+        {index_COLOR_YELLOW, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_glod_dely_time, LOOPNOTFINISH}, \
+    {                                                                                                                  \
+        index_COLOR_GREEN, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_green_dely_time, LOOPNOTFINISH    \
+    }
 
 #define index_red_data COLOR_RED,             \
                        index_Red_loop_time,   \
@@ -141,50 +183,60 @@ const u32 index_color_loop[] = {COLOR_WHITESMOKE,
                          index_color_dely_time, \
                          index_green_dely_time
 
-const u8 index_loop_time[] = {index_white_loop_time, index_Red_loop_time, index_Blue_loop_time, index_Glod_loop_time, index_Green_loop_time};
+// const u8 index_loop_time[] = {index_white_loop_time, index_Red_loop_time, index_Blue_loop_time, index_Glod_loop_time, index_Green_loop_time};
 
-#define LOOPNUM 4 //阿弥陀佛 4声
-#define WORDREPEAT 2
-#define COLORNUM 5 //5个光
+#define AMITUOFO_4LOOP 4  //阿弥陀佛 4声
+#define AMITUOFO_REPEAT 2 //4声重复2次
+#define COLORNUM 5        //5个光
 //开始 等待 0.5s	白光	等待 0.5s	红光 （时序可以重复上个光）	等待 0.3s	蓝光（时序可以重复上个光）		金光（时序可以重复上个光）	等待 0.4s	绿光（时序可以重复上个光）等待 0.4s
+// const u8 index_loop_wait_time[] = {5u, 5u, 3u, 4u, 4u};
 
-const u8 index_loop_wait_time[] = {5u, 5u, 3u, 4u, 4u};
-
+//阿弥陀佛
 typedef struct _tWords
 {
     u8 a;
     u8 mi;
     u8 tuo;
     u8 fo;
+
 } tWords;
 
-typedef struct _t4Words
+//const tWords bbb[AMITUOFO_4LOOP] = {index_4_AMITUOFO_time};
+// #define index_4_AMITUOFO_time {INDEX_AMITUOFO1_TIME},   \
+//                               {INDEX_AMITUOFO2_TIME},   \
+//                               {INDEX_AMITUOFO3_TIME},   \
+//                               {INDEX_AMITUOFO4_TIME}
+// 4声 阿弥陀佛
+typedef struct _tAMiTuoFo
 {
-    u8 Fristword[LOOPNUM];
-    u8 ucWordWaitingtime[LOOPNUM];
-    // u8 Secondword[LOOPNUM];
-    // u8 ucWordWaitingtime2[LOOPNUM];
-} t4Words;
+    tWords tAMiTuoFoRun[AMITUOFO_4LOOP];
+    u8 ucAMiTuoFoWaittime[AMITUOFO_4LOOP];
+    bool bAMiTuoFoFinish;
+} tAMiTuoFo;
 
-const t4Words BuddistWord[WORDREPEAT] = {index_4_chars_time,
-                                         index2_4_chars_time};
-
-static t4Words BuddistWordCal[WORDREPEAT];
+// const tAMiTuoFo tAMiTuoFo_bk[AMITUOFO_REPEAT] = {index_2_4AMITUOFO_time};
+// #define index_2_4AMITUOFO_time  {index_4_AMITUOFO_time, INDEX_AMITUOFOWAITTIME,LOOPNOTFINISH},\
+// {index_4_AMITUOFO_time, INDEX_AMITUOFOWAITTIME,LOOPNOTFINISH}
 //等待 颜色 运行 时间
+
 typedef struct _tColocycle
 {
     u32 ulcolordata;
-    u8 ucRunningtime[LOOPNUM];
-    u8 ucWaitingtime[LOOPNUM];
-    u8 ucColorChangetime;
+    tAMiTuoFo t4timeAMiTuoFoRun[AMITUOFO_REPEAT];
+    u8 uc4timeAMiTuoFoWaitingtime[AMITUOFO_REPEAT];
+    u8 ucColorChangewaittime;
+    bool b4timeAMiTuoFoFinish;
+    // u8 ucRunningtime[AMITUOFO_4LOOP];
+    // u8 ucColorChangetime;
 
 } tColocycle;
 
-const tColocycle Buddistcolor_bk[COLORNUM] = {index_white_data,
-                                              index_red_data,
-                                              index_blue_data,
-                                              index_glod_data,
-                                              index_green_data};
+const tColocycle Buddistcolor_bk[COLORNUM] = {{index_COLOR_WHITE, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_white_dely_time, LOOPNOTFINISH},
+                                              {index_COLOR_RED, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_red_dely_time, LOOPNOTFINISH},
+                                              {index_COLOR_BLUE, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_blue_dely_time, LOOPNOTFINISH},
+                                              {index_COLOR_YELLOW, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_glod_dely_time, LOOPNOTFINISH},
+                                              {index_COLOR_GREEN, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_green_dely_time, LOOPNOTFINISH}};
+//u8 temp[] = {index_color_data};
 
 static tColocycle BuddistcolorCal[COLORNUM];
 
@@ -201,87 +253,204 @@ static tColocycle BuddistcolorCal[COLORNUM];
 void LS_Init(void)
 {
     memcpy(BuddistcolorCal, Buddistcolor_bk, sizeof(Buddistcolor_bk));
-    memcpy(BuddistWordCal, BuddistWord, sizeof(BuddistWord));
+    // memcpy(BuddistWordCal, BuddistWord, sizeof(BuddistWord));
     // ColorChange(BuddistcolorCal[count_big_loop + 3].ulcolordata);
+    // memset(tAMiTuoFodatabk, 0, sizeof(tAMiTuoFodatabk));
 
-    rgb2hsv(Rvalue(BuddistcolorCal[count_big_loop].ulcolordata),
-            Gvalue(BuddistcolorCal[count_big_loop].ulcolordata),
-            Bvalue(BuddistcolorCal[count_big_loop].ulcolordata),
+    rgb2hsv(Rvalue(BuddistcolorCal[0].ulcolordata),
+            Gvalue(BuddistcolorCal[0].ulcolordata),
+            Bvalue(BuddistcolorCal[0].ulcolordata),
             &h, &s, &v);
+}
+
+static u8 count_4words, count_word_loop;
+u8 do_amituofo(tWords *pAMiTuoFo);
+
+/*****************************************************************************************************
+ - 函数说明：阿弥陀佛处理
+ - 隶属模块：内部
+ - 参数说明：pAMiTuoFo 对应处理的计数
+ - 返回说明：还剩余时间
+ - 注      
+*****************************************************************************************************/
+u8 do_amituofo(tWords *pAMiTuoFo)
+{
+    tWords *p;
+    p = pAMiTuoFo;
+    if (0 != p->a)
+    {
+        p->a--;
+        return (p->a + p->mi + p->tuo + p->fo);
+    }
+    else if (0 != p->mi)
+    {
+        p->mi--;
+        return (p->a + p->mi + p->tuo + p->fo);
+    }
+    else if (0 != p->tuo)
+    {
+        p->tuo--;
+        return (p->a + p->mi + p->tuo + p->fo);
+    }
+    else if (0 != p->fo)
+    {
+        p->fo--;
+        return (p->a + p->mi + p->tuo + p->fo);
+    }
+    return 0;
+}
+
+u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo);
+
+/*****************************************************************************************************
+ - 函数说明：4声阿弥陀佛处理
+ - 隶属模块：内部
+ - 参数说明：pAMiTuoFo 对应处理的计数
+ - 返回说明：还剩余时间
+ - 注      
+*****************************************************************************************************/
+u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo)
+{
+    tAMiTuoFo *p;
+    tWords *pwords;
+    u8 *pwordswait;
+    p = pAMiTuoFo;
+
+    if (FALSE == p->bAMiTuoFoFinish)
+    {
+        pwords = p->tAMiTuoFoRun;
+        pwordswait = p->ucAMiTuoFoWaittime;
+        for (u8 i = 0; i < AMITUOFO_4LOOP; i++)
+        {
+            if (0 == p->ucAMiTuoFoWaittime[i])
+            {
+                pwords++;
+            }
+            if (0 != do_amituofo(pwords))
+            {
+                return 1;
+            }
+            else if (0 != *pwordswait)
+            {
+                p->ucAMiTuoFoWaittime[i]--;
+
+                return 1;
+            }
+            else
+            {
+                //pwords++;
+                pwordswait++;
+            }
+        }
+        p->bAMiTuoFoFinish = TRUE;
+    }
+    return 0;
+}
+
+u8 do_2x4_amituofo(tColocycle *pAMiTuoFo);
+
+/*****************************************************************************************************
+ - 函数说明：4声阿弥陀佛处理
+ - 隶属模块：内部
+ - 参数说明：pAMiTuoFo 对应处理的计数
+ - 返回说明：还剩余时间
+ - 注      
+*****************************************************************************************************/
+u8 do_2x4_amituofo(tColocycle *pAMiTuoFo)
+{
+    tColocycle *p;
+    tAMiTuoFo *pwords;
+    u8 *pwordswait;
+    p = pAMiTuoFo;
+
+    if (FALSE == p->b4timeAMiTuoFoFinish)
+    {
+        pwords = p->t4timeAMiTuoFoRun;
+        pwordswait = p->uc4timeAMiTuoFoWaitingtime;
+        for (u8 i = 0; i < AMITUOFO_REPEAT; i++)
+        {
+            if (0 == p->uc4timeAMiTuoFoWaitingtime[i])
+            {
+                //memcpy(p->t4timeAMiTuoFoRun,tAMiTuoFo_bk,sizeof(tAMiTuoFo_bk));
+                pwords++; //第一声完成到下一声
+                          //pwordswait ++;
+            }
+
+            if (0 != do_4_amituofo(pwords))
+            {
+                return 1;
+            }
+            else if (0 != *pwordswait)
+            {
+                p->uc4timeAMiTuoFoWaitingtime[i]--;
+
+                return 1;
+            }
+            else
+            {
+                //pwords++;
+                pwordswait++;
+            }
+        }
+
+        return 0;
+    }
+}
+
+u8 do_colorcycle(tColocycle *pAMiTuoFo);
+
+/*****************************************************************************************************
+ - 函数说明：5色光处理
+ - 隶属模块：内部
+ - 参数说明：pAMiTuoFo 对应处理的计数
+ - 返回说明：还剩余时间
+ - 注      
+*****************************************************************************************************/
+u8 do_colorcycle(tColocycle *pAMiTuoFo)
+{
+    tColocycle *p;
+    u8 pwordswait;
+    p = pAMiTuoFo;
+    for (u8 i = 0; i < COLORNUM; i++)
+    {
+        if (TRUE == p->b4timeAMiTuoFoFinish)
+        {
+            if (i == COLORNUM - 1)
+                return 0;
+            p++; //下个光
+        }
+    }
+
+    if (FALSE == p->b4timeAMiTuoFoFinish)
+    {
+        pwordswait = p->ucColorChangewaittime;
+
+        if (0 != do_2x4_amituofo(p))
+        {
+            return 1;
+        }
+        else if (0 != pwordswait)
+        {
+            p->ucColorChangewaittime--;
+            return 1;
+        }
+        p->b4timeAMiTuoFoFinish = TRUE;
+        p++;
+        ColorChange(p->ulcolordata);
+        return 0;
+    }
 }
 
 void BuddistColor_Handler(void)
 {
     if (TimeBase_Get10msSystemTimeDelta())
     {
+        if (TRUE == BuddistcolorCal[COLORNUM - 1].b4timeAMiTuoFoFinish)
+        {
+            LS_Init();
+        }
 
-        if (0 != BuddistcolorCal[count_big_loop].ucColorChangetime)
-        {
-            BuddistcolorCal[count_big_loop].ucColorChangetime--;
-            bwait = TRUE;
-        }
-        //第一次等待 后 开始
-        // else if (0 != BuddistcolorCal[count_big_loop].ucRunningtime[count_small_loop])
-
-        else if (0 != BuddistcolorCal[count_big_loop].ucRunningtime[count_small_loop])
-        {
-            BuddistcolorCal[count_big_loop].ucRunningtime[count_small_loop]--;
-            bwait = FALSE;
-            //阿 ~ 弥 ~ 陀 ~佛
-            static u8 count_4words,count_word_loop;
-            if (0 != BuddistWordCal[count_4words].Fristword[count_word_loop])
-            {
-                BuddistWordCal[count_4words].Fristword[count_word_loop]--;
-                bwait = FALSE;
-            }
-            //顿
-            else if (0 != BuddistWordCal[count_4words].ucWordWaitingtime[count_word_loop])
-            {
-                bwait = TRUE;
-                BuddistWordCal[count_4words].ucWordWaitingtime[count_word_loop]--;
-                
-            }
-            else if (LOOPNUM - 1 == count_word_loop)
-            {
-                count_4words++;
-                count_word_loop = 0;
-                count_breath = 0;
-            }
-            else
-            {
-                count_word_loop++;
-            }
-
-
-
-        }
-        //每个光，小等待
-        else if (0 != BuddistcolorCal[count_big_loop].ucWaitingtime[count_small_loop])
-        {
-            BuddistcolorCal[count_big_loop].ucWaitingtime[count_small_loop]--;
-            bwait = TRUE;
-        }
-        // 一种颜色结束
-        else if (LOOPNUM - 1 == count_small_loop)
-        {
-            count_big_loop++;
-            count_small_loop = 0;
-            count_breath = 0;
-            ColorChange(BuddistcolorCal[count_big_loop].ulcolordata);
-        }
-        else
-        {
-            count_small_loop++;
-        }
-        //5个光结束
-        if (COLORNUM == count_big_loop)
-        {
-            count_big_loop = 0;
-            count_small_loop = 0;
-            count_breath = 0;
-            memcpy(BuddistcolorCal, Buddistcolor_bk, sizeof(Buddistcolor_bk));
-            ColorChange(BuddistcolorCal[count_big_loop].ulcolordata);
-        }
+        do_colorcycle(BuddistcolorCal);
     }
 }
 
@@ -304,9 +473,9 @@ void ColorChange(u32 ulRGB)
 u16 ucStepRunTime(void);
 u16 ucStepRunTime(void)
 {
-    u16 a = (u16)Buddistcolor_bk[count_big_loop].ucRunningtime[count_small_loop];
-    a = 299 * a / 30; // 299 in 3s,
-    return a;
+    //u16 a = (u16)Buddistcolor_bk[count_big_loop].ucRunningtime[count_small_loop];
+    //a = 299 * a / 30; // 299 in 3s,
+    //return a;
 }
 
 void ColorWave(void)
@@ -317,11 +486,11 @@ void ColorWave(void)
     {
         // count_breath++;
 
-        v = (float)index_wave[count_breath * 299 / ucStepRunTime()] / 256;
+        v = (float)index_wave[count_breath] / 256;
         hsv2rgb(h, s, v, &r, &g, &b);
-        bUpdateColor = TRUE;
+        bUpdateColor = true;
 
-        if (count_breath >= ucStepRunTime())
+        if (count_breath >= 299)
         {
             count_breath = 0;
         }
