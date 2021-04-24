@@ -97,7 +97,7 @@ static void CLK_Config(void)
 void main(void)
 {
   /* Disable general interrupts -----------------------------------------*/
-   disableInterrupts();
+  disableInterrupts();
 
   /* Clock configuration -----------------------------------------*/
   CLK_Config();
@@ -124,10 +124,7 @@ void main(void)
 
     TimeBase_HandleTimeBaseCouter(); // Timebase reset
 
-    ColorWave();
-   
-    BuddistColor_Handler();
-    
+    BuddistColor_Handler(); //灯的处理
 
     if (TimeBase_Get1msSystemTimeDelta())
       counter1ms++;

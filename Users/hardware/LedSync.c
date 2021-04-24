@@ -85,27 +85,27 @@ typedef struct _tColocycle
 
 #define index_color_dely_time 1u, 1u, 1u, 1u
 
-//阿弥陀佛 每声时间
+//阿弥陀佛 每声时间 100ms
 #define INDEX_AMITUOFO1_TIME \
     {                        \
-        10u, 30u, 20u, 20u   \
+        20u, 24u, 24u, 33u   \
     }
 #define INDEX_AMITUOFO2_TIME \
     {                        \
-        20u, 30u, 20u, 20u   \
+        30u, 32u, 25u, 19u   \
     }
 #define INDEX_AMITUOFO3_TIME \
     {                        \
-        30u, 30u, 20u, 20u   \
+        35u, 16u, 23u, 26u   \
     }
 #define INDEX_AMITUOFO4_TIME \
     {                        \
-        40u, 30u, 20u, 20u   \
+        30u, 13u, 28u, 30u   \
     }
 //四声间隔
 #define INDEX_AMITUOFOWAITTIME \
     {                          \
-        5u, 2u, 2u, 5u         \
+        3u, 2u, 2u, 3u         \
     }
 // 两个四声间隔
 #define INDEX_2_AMITUOFOWAITTIME \
@@ -173,11 +173,11 @@ static float h;
 static float s;
 static float v;
 
-static float h_bak;
-static float s_bak;
-static float v_bak;
+//static float h_bak;
+//static float s_bak;
+//static float v_bak;
 
-static u16 count_breath = 0;
+static float count_breath = 0;
 static float ucStepRunTime = 1;
 static tColocycle BuddistcolorCal[COLORNUM];
 const tColocycle Buddistcolor_bk[COLORNUM] = {{index_COLOR_WHITE, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_white_dely_time, LOOPNOTFINISH},
@@ -188,6 +188,7 @@ const tColocycle Buddistcolor_bk[COLORNUM] = {{index_COLOR_WHITE, {index_2_4AMIT
 static bool blightOn;
 static tWords ucAMiTuoFoTimeStore = INDEX_AMITUOFO1_TIME;
 const tWords ucAMiTuoFoTime_bk = INDEX_AMITUOFO1_TIME;
+static bool bLightBreathStart;
 /** export variables ----------------------------------------------------------*/
 
 /* 呼吸灯曲线表 */
@@ -223,8 +224,6 @@ const uint16_t index_wave[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
                                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
-//增加每个字一光
-
 /** Private function prototypes -----------------------------------------------*/
 void Do_StepRunTime(u8 ucStepRunTime_cal);
 
@@ -233,26 +232,6 @@ u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo);
 u8 do_2x4_amituofo(tColocycle *pAMiTuoFo);
 u8 do_colorcycle(tColocycle *pAMiTuoFo);
 /** Private functions ---------------------------------------------------------*/
-
-/** Export functions -- -------------------------------------------------------*/
-
-void LS_Init(void)
-{
-    memcpy(BuddistcolorCal, Buddistcolor_bk, sizeof(Buddistcolor_bk));
-    // memcpy(BuddistWordCal, BuddistWord, sizeof(BuddistWord));
-    // ColorChange(BuddistcolorCal[count_big_loop + 3].ulcolordata);
-    // memset(tAMiTuoFodatabk, 0, sizeof(tAMiTuoFodatabk));
-    // memcpy(ucAMiTuoFoTime_bk, ucAMiTuoFoTimeStore, sizeof(ucAMiTuoFoTime_bk));
-    ucAMiTuoFoTimeStore.a = ucAMiTuoFoTime_bk.a;
-    ucAMiTuoFoTimeStore.mi = ucAMiTuoFoTime_bk.mi;
-    ucAMiTuoFoTimeStore.tuo = ucAMiTuoFoTime_bk.tuo;
-    ucAMiTuoFoTimeStore.fo = ucAMiTuoFoTime_bk.fo;
-
-    rgb2hsv(Rvalue(BuddistcolorCal[0].ulcolordata),
-            Gvalue(BuddistcolorCal[0].ulcolordata),
-            Bvalue(BuddistcolorCal[0].ulcolordata),
-            &h, &s, &v);
-}
 
 /*****************************************************************************************************
  - 函数说明：阿弥陀佛处理
@@ -289,6 +268,7 @@ u8 do_amituofo(tWords *pAMiTuoFo)
         Do_StepRunTime(ucAMiTuoFoTimeStore.fo);
         return (p->a + p->mi + p->tuo + p->fo);
     }
+    count_breath = 0;
     return 0;
 }
 
@@ -296,7 +276,7 @@ u8 do_amituofo(tWords *pAMiTuoFo)
  - 函数说明：4声阿弥陀佛处理
  - 隶属模块：内部
  - 参数说明：pAMiTuoFo 对应处理的计数
- - 返回说明：还剩余时间
+ - 返回说明：0-> 完成
  - 注      
 *****************************************************************************************************/
 u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo)
@@ -325,9 +305,9 @@ u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo)
             {
                 p->ucAMiTuoFoWaittime[i]--;
                 blightOn = FALSE;
+                //下组4字时间时间保存
                 u8 j;
                 j = i + 1;
-                // memcpy(ucAMiTuoFoTimeStore, pAMiTuoFo->tAMiTuoFoRun[i], sizeof(ucAMiTuoFoTimeStore));
                 ucAMiTuoFoTimeStore.a = pAMiTuoFo->tAMiTuoFoRun[j].a;
                 ucAMiTuoFoTimeStore.mi = pAMiTuoFo->tAMiTuoFoRun[j].mi;
                 ucAMiTuoFoTimeStore.tuo = pAMiTuoFo->tAMiTuoFoRun[j].tuo;
@@ -342,6 +322,7 @@ u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo)
         }
         p->bAMiTuoFoFinish = TRUE;
     }
+
     return 0;
 }
 
@@ -349,7 +330,7 @@ u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo)
  - 函数说明：4声阿弥陀佛处理
  - 隶属模块：内部
  - 参数说明：pAMiTuoFo 对应处理的计数
- - 返回说明：还剩余时间
+ - 返回说明：0-> 完成
  - 注      
 *****************************************************************************************************/
 u8 do_2x4_amituofo(tColocycle *pAMiTuoFo)
@@ -367,9 +348,7 @@ u8 do_2x4_amituofo(tColocycle *pAMiTuoFo)
         {
             if (0 == p->uc4timeAMiTuoFoWaitingtime[i])
             {
-                //memcpy(p->t4timeAMiTuoFoRun,tAMiTuoFo_bk,sizeof(tAMiTuoFo_bk));
                 pwords++; //第一声完成到下一声
-                          //pwordswait ++;
             }
 
             if (0 != do_4_amituofo(pwords))
@@ -383,7 +362,6 @@ u8 do_2x4_amituofo(tColocycle *pAMiTuoFo)
 
                 u8 j;
                 j = i + 1;
-                // memcpy(ucAMiTuoFoTimeStore, pAMiTuoFo->tAMiTuoFoRun[i], sizeof(ucAMiTuoFoTimeStore));
                 ucAMiTuoFoTimeStore.a = pAMiTuoFo->t4timeAMiTuoFoRun[j].tAMiTuoFoRun[0].a;
                 ucAMiTuoFoTimeStore.mi = pAMiTuoFo->t4timeAMiTuoFoRun[j].tAMiTuoFoRun[0].mi;
                 ucAMiTuoFoTimeStore.tuo = pAMiTuoFo->t4timeAMiTuoFoRun[j].tAMiTuoFoRun[0].tuo;
@@ -392,7 +370,6 @@ u8 do_2x4_amituofo(tColocycle *pAMiTuoFo)
             }
             else
             {
-                //pwords++;
                 pwordswait++;
             }
         }
@@ -405,7 +382,7 @@ u8 do_2x4_amituofo(tColocycle *pAMiTuoFo)
  - 函数说明：5色光处理
  - 隶属模块：内部
  - 参数说明：pAMiTuoFo 对应处理的计数
- - 返回说明：还剩余时间
+ - 返回说明：0-> 完成
  - 注      
 *****************************************************************************************************/
 u8 do_colorcycle(tColocycle *pAMiTuoFo)
@@ -447,24 +424,13 @@ u8 do_colorcycle(tColocycle *pAMiTuoFo)
         return 0;
     }
 }
-
-void BuddistColor_Handler(void)
-{
-    if (TimeBase_Get100msSystemTimeDelta())
-    {
-        if (TRUE == BuddistcolorCal[COLORNUM - 1].b4timeAMiTuoFoFinish)
-        {
-            LS_Init();
-        }
-
-        do_colorcycle(BuddistcolorCal);
-    }
-    if (blightOn == FALSE)
-    {
-        // ColorChange(COLOR_BLACK);
-    }
-}
-
+/*****************************************************************************************************
+ - 函数说明：光颜色变化处理
+ - 隶属模块：内部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
 void ColorChange(u32 ulRGB)
 {
     //r = (u8)((ulRGB & 0x00ff0000) >> 16);
@@ -482,34 +448,149 @@ void ColorChange(u32 ulRGB)
     count_breath = 0;
 }
 
-//100ms
+/*****************************************************************************************************
+ - 函数说明：呼吸速度变化
+ - 隶属模块：内部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
 void Do_StepRunTime(u8 ucStepRunTime_cal)
 {
     //u16 a = ucStepRunTime_cal;
     ucStepRunTime = 30 / (float)ucStepRunTime_cal;
+
+    // Put_u8((u8)ucStepRunTime);
+    // DBG("\n");
     //ucStepRunTime = 1;
 }
 
+/** Export functions -- -------------------------------------------------------*/
+/*****************************************************************************************************
+ - 函数说明：初始化
+ - 隶属模块：外部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
+void LS_Init(void)
+{
+    memcpy(BuddistcolorCal, Buddistcolor_bk, sizeof(Buddistcolor_bk));
+
+    ucAMiTuoFoTimeStore.a = ucAMiTuoFoTime_bk.a;
+    ucAMiTuoFoTimeStore.mi = ucAMiTuoFoTime_bk.mi;
+    ucAMiTuoFoTimeStore.tuo = ucAMiTuoFoTime_bk.tuo;
+    ucAMiTuoFoTimeStore.fo = ucAMiTuoFoTime_bk.fo;
+
+    rgb2hsv(Rvalue(BuddistcolorCal[0].ulcolordata),
+            Gvalue(BuddistcolorCal[0].ulcolordata),
+            Bvalue(BuddistcolorCal[0].ulcolordata),
+            &h, &s, &v);
+    count_breath = 0;
+    ucStepRunTime = 1;
+}
+
+/*****************************************************************************************************
+ - 函数说明：
+ - 隶属模块：外部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
+void ColorLightStart(void)
+{
+    bLightBreathStart = TRUE;
+}
+
+/*****************************************************************************************************
+ - 函数说明：
+ - 隶属模块：外部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
+void ColorLightoff(void)
+{
+    bLightBreathStart = FALSE;
+}
+/*****************************************************************************************************
+ - 函数说明：
+ - 隶属模块：外部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
+void BuddistColor_Handler(void)
+{
+
+    if (bLightBreathStart)
+    {
+        ColorWave();
+    }
+
+    if (TimeBase_Get100msSystemTimeDelta())
+    {
+
+        if (TRUE == BuddistcolorCal[COLORNUM - 1].b4timeAMiTuoFoFinish)
+        {
+            LS_Init();
+        }
+        if (bLightBreathStart)
+        {
+            do_colorcycle(BuddistcolorCal);
+        }
+        else
+        {
+            LS_Init();
+            ColorChange(COLOR_BLACK);
+        }
+
+        if (blightOn == FALSE)
+        {
+            // ColorChange(COLOR_BLACK); // bug here
+        }
+    }
+}
+
+/*****************************************************************************************************
+ - 函数说明：
+ - 隶属模块：外部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
 void ColorWave(void)
 {
     bool bUpdateColor = FALSE;
 
     if (TimeBase_Get10msSystemTimeDelta())
     {
+        static u8 checkvalue;
         // count_breath++;
-
-        v = (float)index_wave[count_breath] / 256;
-        hsv2rgb(h, s, v, &r, &g, &b);
-        bUpdateColor = true;
-
+        
+        {
+            checkvalue = (u8)count_breath;
+            if (checkvalue == 41)
+            {
+              checkvalue = 41;
+            }
+             Put_u8(checkvalue);
+            DBG("\n");
+            
+            v = (float)index_wave[(u8)count_breath] / 256; // not good ..sometimes stop
+            hsv2rgb(h, s, v, &r, &g, &b);
+            bUpdateColor = true;
+        }
+        if (blightOn == FALSE)
+        {
+            count_breath = 0;
+        }
+        count_breath += ucStepRunTime;
         if (count_breath >= 299)
         {
             count_breath = 0;
         }
-        else
-        {
-            count_breath += (u16)ucStepRunTime;
-        }
+        //if
 
         // printf("r = %d\r\n", r);
         // printf("g = %d\r\n", g);

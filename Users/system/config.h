@@ -25,7 +25,7 @@
      是否打开调试信息
 **********************************************************/
 // #define  BAUD_NUM                   96//384//1152
-// #define  FUNC_UARTDBG_EN	        0//串口调试,烧芯片之前必须设置为[占560 byte]
+#define  FUNC_UARTDBG_EN	        1//串口调试,烧芯片之前必须设置为[占560 byte]
 
 #if FUNC_UARTDBG_EN
 #define DBG(str) Uart_PutString(str)
@@ -40,7 +40,7 @@
 
 #define SENDLENTH 10    //发送数据总长度
 #define MAX_MAIN_VOL 30 //最大音量
-#define Middle_VOL 15 //最大音量
+#define Middle_VOL 8 //初始音量
 #define QUERYACKTIME 20
 #define SYSRETURNTIME 20
 

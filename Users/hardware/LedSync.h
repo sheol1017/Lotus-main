@@ -18,6 +18,8 @@
 
 void LS_Init(void);
 void ColorWave(void);
+void ColorLightStart(void);
+void ColorLightoff(void);
 void ColorChange(u32 ulRGB);
 void BuddistColor_Handler(void); //100ms running
 #endif // __LED_SYNC__
