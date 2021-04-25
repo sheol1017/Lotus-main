@@ -79,7 +79,9 @@ enum
     MSG_UDISK_OUT,
     MSG_TF_OUT,
     MSG_PC_OUT,
-    
+    MSG_BRIGHTNESS_INC,
+    MSG_BRIGHTNESS_DEC,
+
     NO_MSG = 0xFF,
 };
 

@@ -82,7 +82,7 @@ void System_Init(void)
 	System_Status = SYS_STATUS_WORK;
 	SysReturnTime = 30; //定义3S的时候等待模块初始化完成
 
-#ifdef DEBUG
+#if DEBUG
 	OnlineDevice = 0x02;
 	put_msg_lifo(MSG_RETURN_MINIT);
 #endif // DEBUG

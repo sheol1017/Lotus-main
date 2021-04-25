@@ -96,6 +96,7 @@ static void CLK_Config(void)
 ********************************************************************************/
 void main(void)
 {
+  
   /* Disable general interrupts -----------------------------------------*/
   disableInterrupts();
 

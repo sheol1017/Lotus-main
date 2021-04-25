@@ -16,16 +16,14 @@
 #include "WS2812B.h"
 #include "ColorConvert.h"
 #include "string.h"
+#include <math.h>
 
 /** Private typedef -----------------------------------------------------------*/
 
 #define AMITUOFO_4LOOP 4  //阿弥陀佛 4声
 #define AMITUOFO_REPEAT 2 //4声重复2次
 #define COLORNUM 5        //5个光
-
-#define Rvalue(ulRGB) (u8)((ulRGB & 0x00ff0000) >> 16)
-#define Gvalue(ulRGB) (u8)((ulRGB & 0x0000ff00) >> 8)
-#define Bvalue(ulRGB) (u8)(ulRGB & 0x000000ff)
+#define INC_DEC_RATE 0.5  //<1
 
 //阿弥陀佛
 typedef struct _tWords
@@ -67,13 +65,13 @@ typedef struct _tColocycle
 
 } tColocycle;
 /** Private define ------------------------------------------------------------*/
-
+//COLOR_WHITE,COLOR_AMARANTH,COLOR_BLUE,COLOR_GOLD,COLOR_LIME
 //5色光颜色
 #define index_COLOR_WHITE COLOR_WHITE
-#define index_COLOR_RED COLOR_RED
+#define index_COLOR_RED COLOR_AMARANTH
 #define index_COLOR_BLUE COLOR_BLUE
-#define index_COLOR_YELLOW COLOR_YELLOW
-#define index_COLOR_GREEN COLOR_GREEN
+#define index_COLOR_YELLOW COLOR_GOLD
+#define index_COLOR_GREEN COLOR_LIME
 
 //第一声 10.5s	等待 0.1s	第二声 10.7s	等待 0.1s	第三声10.0s	等待 0.1s	第四声10.s 	等待 0.1s	从 第一声处循环 至 第四声
 //100ms
@@ -165,19 +163,22 @@ typedef struct _tColocycle
 // static color_HSV_t g_hsv;
 // static color_HSV_t g_hsv_bak;
 // static color_RGB_t g_rgb = {0x639C,0x0000,0x0000};
-static uint8_t r;
-static uint8_t g;
-static uint8_t b;
+// static uint8_t r;
+// static uint8_t g;
+// static uint8_t b;
 
-static float h;
-static float s;
-static float v;
+// static float h;
+// static float s;
+// static float v;
 
+static tColor_RGB s_rgb;
+static tColor_HSV s_hsv;
+static tColor_HSV s_hsv_bak, s_hsv_save;
 //static float h_bak;
 //static float s_bak;
 //static float v_bak;
 
-static float count_breath = 0;
+static u16 count_breath = 0;
 static float ucStepRunTime = 1;
 static tColocycle BuddistcolorCal[COLORNUM];
 const tColocycle Buddistcolor_bk[COLORNUM] = {{index_COLOR_WHITE, {index_2_4AMITUOFO_time}, INDEX_2_AMITUOFOWAITTIME, index_white_dely_time, LOOPNOTFINISH},
@@ -189,49 +190,38 @@ static bool blightOn;
 static tWords ucAMiTuoFoTimeStore = INDEX_AMITUOFO1_TIME;
 const tWords ucAMiTuoFoTime_bk = INDEX_AMITUOFO1_TIME;
 static bool bLightBreathStart;
-/** export variables ----------------------------------------------------------*/
 
-/* 呼吸灯曲线表 */
-const uint16_t index_wave[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                               2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                               3, 3, 3, 3, 3, 3, 3, 3, 3,
-                               4, 4, 4, 4, 4, 4, 4,
-                               5, 5, 5, 5, 5,
-                               6, 6, 6, 6, 6,
-                               7, 7, 7, 7,
-                               8, 8, 8,
-                               9, 9, 9,
-                               10, 10, 10,
-                               11, 11,
-                               12, 12,
-                               13, 13,
-                               14, 14,
-                               15, 15,
-                               16, 16,
-                               17,
-                               18, 18,
-                               19,
-                               20, 20,
-                               21, 22, 23, 24,
-                               25, 25,
-                               26, 27, 28, 30, 31, 32, 33, 34, 36, 37, 38, 40, 41, 43, 45, 46, 48, 50, 52, 54, 56, 58, 60, 62, 65, 67, 70, 72, 75, 78, 81, 84, 87, 90,
-                               94, 97, 101, 105, 109, 113, 117, 122, 126, 131, 136, 141, 146, 152, 158, 164, 170, 176, 183, 190, 197, 205,
-                               213, 221, 229, 238, 247, 255, 255, 247, 238, 229, 221, 213, 205, 197, 190, 183, 176, 170, 164, 158, 152, 146,
-                               141, 136, 131, 126, 122, 117, 113, 109, 105, 101, 97, 94, 90, 87, 84, 81, 78, 75, 72, 70, 67, 65, 62, 60, 58,
-                               56, 54, 52, 50, 48, 46, 45, 43, 41, 40, 38, 37, 36, 34, 33, 32, 31, 30, 28, 27, 26, 25, 25, 24, 23, 22, 21, 20,
-                               20, 19, 18, 18, 17, 16, 16, 15, 15, 14, 14, 13, 13, 12, 12, 11, 11, 10, 10, 10, 9, 9, 9, 8, 8, 8, 7, 7, 7, 7, 6,
-                               6, 6, 6, 6, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-                               2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+static bool bLightIncrease = false;
+static bool bLightDecrease = false;
+static u8 Maxtime_bk;
+static float Brightcal = 1;
+const float BrightnessLevel[eBrightnessLevel_Max] = {BrightnessTable};
+static float k;
+/** export variables ----------------------------------------------------------*/
 
 /** Private function prototypes -----------------------------------------------*/
 void Do_StepRunTime(u8 ucStepRunTime_cal);
-
+void Do_increaseLight(u8 a, u8 b);
 u8 do_amituofo(tWords *pAMiTuoFo);
 u8 do_4_amituofo(tAMiTuoFo *pAMiTuoFo);
 u8 do_2x4_amituofo(tColocycle *pAMiTuoFo);
 u8 do_colorcycle(tColocycle *pAMiTuoFo);
+void LS_LedOff(void);
+
 /** Private functions ---------------------------------------------------------*/
+static void LS_Calculat_k(float v, float Time)
+{
+    //float WordsCycleTime[eCycle]
+    // k = (float)(v / sqrt(WordsCycleTimeBrighten[eCycle]));
+    // k = (float)(v / sqrt(Time*INC_DEC_RATE));
+    //y = -1/(t*r)^2 (x- (t*r))^2 +v
+    k = (float)(-v / pow((Time * INC_DEC_RATE), 2));
+}
+
+static void LS_LedOff(void)
+{
+    RGB_Refresh(COLOR_BLACK, MAX_LED_NUMBER);
+}
 
 /*****************************************************************************************************
  - 函数说明：阿弥陀佛处理
@@ -246,29 +236,37 @@ u8 do_amituofo(tWords *pAMiTuoFo)
     p = pAMiTuoFo;
     if (0 != p->a)
     {
+
+        Do_increaseLight(p->a, ucAMiTuoFoTimeStore.a);
         p->a--;
         Do_StepRunTime(ucAMiTuoFoTimeStore.a);
         return (p->a + p->mi + p->tuo + p->fo);
     }
     else if (0 != p->mi)
     {
+        Do_increaseLight(p->mi, ucAMiTuoFoTimeStore.mi);
         p->mi--;
+
         Do_StepRunTime(ucAMiTuoFoTimeStore.mi);
         return (p->a + p->mi + p->tuo + p->fo);
     }
     else if (0 != p->tuo)
     {
+        Do_increaseLight(p->tuo, ucAMiTuoFoTimeStore.tuo);
         p->tuo--;
+
         Do_StepRunTime(ucAMiTuoFoTimeStore.tuo);
         return (p->a + p->mi + p->tuo + p->fo);
     }
     else if (0 != p->fo)
     {
+        Do_increaseLight(p->fo, ucAMiTuoFoTimeStore.fo);
         p->fo--;
+
         Do_StepRunTime(ucAMiTuoFoTimeStore.fo);
         return (p->a + p->mi + p->tuo + p->fo);
     }
-    count_breath = 0;
+    // count_breath = 0;
     return 0;
 }
 
@@ -431,21 +429,27 @@ u8 do_colorcycle(tColocycle *pAMiTuoFo)
  - 返回说明：
  - 注      
 *****************************************************************************************************/
-void ColorChange(u32 ulRGB)
+void ColorChange(u32 ulColor)
 {
     //r = (u8)((ulRGB & 0x00ff0000) >> 16);
     //g = (u8)((ulRGB & 0x0000ff00) >> 8);
     //b = (u8)(ulRGB & 0x000000ff);
     //h = s = v = 0;
+    s_rgb.r = (uint8_t)(ulColor >> 16);
+    s_rgb.g = (uint8_t)(ulColor >> 8);
+    s_rgb.b = (uint8_t)(ulColor);
+    rgb2hsv(&s_rgb, &s_hsv);
+    s_hsv_bak = s_hsv;
+    s_hsv_save = s_hsv;
+    s_hsv_bak.v = Brightcal * s_hsv_save.v;
+}
 
-    // rgb2hsv(r, g, b, &h, &s, &v);
-    // v = (float)index_wave[0] / 256;
-    // hsv2rgb(h, s, v, &r, &g, &b);
-    rgb2hsv(Rvalue(ulRGB),
-            Gvalue(ulRGB),
-            Bvalue(ulRGB),
-            &h, &s, &v);
-    count_breath = 0;
+void Do_increaseLight(u8 a, u8 b)
+{
+    if (a == b)
+    {
+        bLightIncrease = true;
+    }
 }
 
 /*****************************************************************************************************
@@ -458,7 +462,11 @@ void ColorChange(u32 ulRGB)
 void Do_StepRunTime(u8 ucStepRunTime_cal)
 {
     //u16 a = ucStepRunTime_cal;
-    ucStepRunTime = 30 / (float)ucStepRunTime_cal;
+    ucStepRunTime = (float)ucStepRunTime_cal;
+
+    LS_Calculat_k(s_hsv_bak.v, ucStepRunTime);
+
+    Maxtime_bk = ucStepRunTime_cal;
 
     // Put_u8((u8)ucStepRunTime);
     // DBG("\n");
@@ -482,12 +490,19 @@ void LS_Init(void)
     ucAMiTuoFoTimeStore.tuo = ucAMiTuoFoTime_bk.tuo;
     ucAMiTuoFoTimeStore.fo = ucAMiTuoFoTime_bk.fo;
 
-    rgb2hsv(Rvalue(BuddistcolorCal[0].ulcolordata),
-            Gvalue(BuddistcolorCal[0].ulcolordata),
-            Bvalue(BuddistcolorCal[0].ulcolordata),
-            &h, &s, &v);
+    s_rgb.r = BuddistcolorCal[0].ulcolordata;
+    s_rgb.g = BuddistcolorCal[0].ulcolordata;
+    s_rgb.b = BuddistcolorCal[0].ulcolordata;
+    rgb2hsv(&s_rgb, &s_hsv);
+    // rgb2hsv(&s_rgb,&s_hsv_bak);
+    s_hsv_bak = s_hsv;
+    s_hsv_save = s_hsv;
+    s_hsv_bak.v = Brightcal * s_hsv_save.v;
+    ColorChange(COLOR_WHITE);
+    bLightDecrease = true;
     count_breath = 0;
     ucStepRunTime = 1;
+    Maxtime_bk = ucAMiTuoFoTimeStore.a;
 }
 
 /*****************************************************************************************************
@@ -500,6 +515,7 @@ void LS_Init(void)
 void ColorLightStart(void)
 {
     bLightBreathStart = TRUE;
+    LS_Init();
 }
 
 /*****************************************************************************************************
@@ -512,6 +528,46 @@ void ColorLightStart(void)
 void ColorLightoff(void)
 {
     bLightBreathStart = FALSE;
+}
+
+/*****************************************************************************************************
+ - 函数说明：调节亮度
+ - 隶属模块：外部
+ - 参数说明：
+ - 返回说明：
+ - 注      
+*****************************************************************************************************/
+u8 Change_Brightness(bool inc)
+{
+    for (u8 i = 0, j = 0; i < eBrightnessLevel_Max; i++)
+    {
+
+        if (Brightcal == BrightnessLevel[i])
+        {
+            if (inc)
+            {
+                j = i + 1;
+                if (i == eBrightnessLevel_Max - 1)
+                {
+                    j = eBrightnessLevel_Max - 1;
+                }
+            }
+            else
+            {
+                j = i - 1;
+                if (i == 0)
+                    j = 0;
+            }
+
+            Brightcal = BrightnessLevel[j];
+            s_hsv_bak.v = Brightcal * s_hsv_save.v;
+            return j;
+        }
+    }
+
+    Brightcal = BrightnessLevel[eBrightnessLevel_Max];
+    s_hsv_bak.v = Brightcal * s_hsv_save.v;
+    return eBrightnessLevel_Max;
 }
 /*****************************************************************************************************
  - 函数说明：
@@ -534,6 +590,8 @@ void BuddistColor_Handler(void)
         if (TRUE == BuddistcolorCal[COLORNUM - 1].b4timeAMiTuoFoFinish)
         {
             LS_Init();
+            if (bLightBreathStart)
+                put_msg_lifo(MSG_MUSIC_SPECIAL_PLAY);
         }
         if (bLightBreathStart)
         {
@@ -542,12 +600,12 @@ void BuddistColor_Handler(void)
         else
         {
             LS_Init();
-            ColorChange(COLOR_BLACK);
+            LS_LedOff();
         }
 
         if (blightOn == FALSE)
         {
-            // ColorChange(COLOR_BLACK); // bug here
+            LS_LedOff();
         }
     }
 }
@@ -565,36 +623,79 @@ void ColorWave(void)
 
     if (TimeBase_Get10msSystemTimeDelta())
     {
-        static u8 checkvalue;
-        // count_breath++;
-        
-        {
-            checkvalue = (u8)count_breath;
-            if (checkvalue == 41)
-            {
-              checkvalue = 41;
-            }
-             Put_u8(checkvalue);
-            DBG("\n");
-            
-            v = (float)index_wave[(u8)count_breath] / 256; // not good ..sometimes stop
-            hsv2rgb(h, s, v, &r, &g, &b);
-            bUpdateColor = true;
-        }
-        if (blightOn == FALSE)
-        {
-            count_breath = 0;
-        }
-        count_breath += ucStepRunTime;
-        if (count_breath >= 299)
-        {
-            count_breath = 0;
-        }
-        //if
 
-        // printf("r = %d\r\n", r);
-        // printf("g = %d\r\n", g);
-        // printf("b = %d\r\n", b);
+        if (bLightIncrease == true)
+        {
+            count_breath++;
+            //static float t;
+            float t = (float)(count_breath / 10.0);
+
+            // s_hsv.v = k * sqrt(t * INC_DEC_RATE);
+            s_hsv.v = k * pow((t - (Maxtime_bk * INC_DEC_RATE)), 2) + s_hsv_bak.v; //  y = -1/(t*r)^2 (x- (t*r))^2 +v
+            // Put_u8((u8)(s_hsv.v * 100));
+
+            // max v limitation
+            if (s_hsv.v > s_hsv_bak.v)
+            {
+                s_hsv.v = s_hsv_bak.v;
+            }
+            bLightDecrease = FALSE;
+            // max time limitation
+            if (t >= Maxtime_bk)
+            {
+                t = Maxtime_bk;
+
+                // s_hsv.v = s_hsv_bak.v;
+
+                bLightDecrease = true;
+                bLightIncrease = false;
+                DBG("\n Increas ok\n");
+                count_breath = 0;
+            }
+        }
+        if (bLightDecrease == true)
+        {
+            // count_breath--;
+            float t = (float)(count_breath / 10.0);
+            // TODO: add flags for scheme changes
+            // For Scheme 1:
+            // Put_u8((u8)count_breath);
+            // DBG(" ");
+            if (t < Maxtime_bk)
+            {
+                s_hsv.v = (float)(t / (Maxtime_bk * (1 - INC_DEC_RATE))) * s_hsv_bak.v;
+            }
+            else
+            {
+                s_hsv.v = 0;
+                count_breath = 0;
+                // DBG("\n Decreas ok\n");
+                bLightDecrease = false;
+
+                // bUpdateWordsCycle = true;
+            }
+
+            // if( s_hsv.v >= (float)0.2 )
+            // {
+            //     s_hsv.v -= (float)0.2;
+            // }
+            // else
+            // {
+            //     s_hsv.v = 0;
+            //     count = 0;
+
+            //     bLightDecrease = false;
+            // bLightIncrease = true;
+
+            // LS_Calculat_k(s_hsv_bak.v,eLSWC_Cycle_1);
+            // }
+
+            // For Scheme 2:
+        }
+
+        // v_bak -= (float)0.01;
+        hsv2rgb(&s_hsv, &s_rgb);
+        bUpdateColor = true;
     }
 
     if (bUpdateColor == TRUE)
@@ -602,10 +703,23 @@ void ColorWave(void)
         u32 ulRGB = 0;
         // ulRGB = (((u32)(r)) << 16) | ((u32)(g << 8)) | ((u32)(b));
 
-        ulRGB |= r;
-        ulRGB = (ulRGB << 8) | g;
-        ulRGB = (ulRGB << 8) | b;
+        ulRGB |= s_rgb.r;
+        ulRGB = (ulRGB << 8) | s_rgb.g;
+        ulRGB = (ulRGB << 8) | s_rgb.b;
 
         RGB_Refresh(ulRGB, LED_Num);
     }
+}
+
+bool LS_StartColorCycle(void)
+{
+    bool bReturn = false;
+
+    // if (bStartColorCycleReady == true)
+    // {
+    //     bStartColorCycle = true;
+    //     bReturn = true;
+    // }
+
+    return bReturn;
 }

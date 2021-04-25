@@ -130,6 +130,7 @@ void Uart_PutChar(u8 dat)
     Uart_PutByte(hex[ch]);
     ch = dat & 0x0f;
     Uart_PutByte(hex[ch]);
+    DBG(" ");
 }
 #endif
 

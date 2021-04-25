@@ -59,14 +59,15 @@ static float max(float a, float b, float c)
 
 /** Export functions -- -------------------------------------------------------*/
 
-void rgb2hsv(uint8_t r, uint8_t g, uint8_t b, float *h, float *s, float *v)
+// void rgb2hsv(uint8_t r, uint8_t g, uint8_t b, float *h, float *s, float *v)
+void rgb2hsv(tColor_RGB* pColor_rgb, tColor_HSV* pColor_hsv)
 {
   float red, green ,blue;
   float cmax, cmin, delta;
   
-  red = (float)r / 255;
-  green = (float)g / 255;
-  blue = (float)b / 255;
+  red   = (float)pColor_rgb->r / 255;
+  green = (float)pColor_rgb->g / 255;
+  blue  = (float)pColor_rgb->b / 255;
   
   cmax = max(red, green, blue);
   cmin = min(red, green, blue);
@@ -75,7 +76,7 @@ void rgb2hsv(uint8_t r, uint8_t g, uint8_t b, float *h, float *s, float *v)
   /* H */
   if(delta == 0)
   {
-    *h = 0;
+    pColor_hsv->h = 0;
   }
   else
   {
@@ -83,74 +84,75 @@ void rgb2hsv(uint8_t r, uint8_t g, uint8_t b, float *h, float *s, float *v)
     {
       if(green >= blue)
       {
-        *h = 60 * ((green - blue) / delta);
+        pColor_hsv->h = 60 * ((green - blue) / delta);
       }
       else
       {
-        *h = 60 * ((green - blue) / delta) + 360;
+        pColor_hsv->h = 60 * ((green - blue) / delta) + 360;
       }
     }
     else if(cmax == green)
     {
-      *h = 60 * ((blue - red) / delta + 2);
+      pColor_hsv->h = 60 * ((blue - red) / delta + 2);
     }
     else if(cmax == blue) 
     {
-      *h = 60 * ((red - green) / delta + 4);
+      pColor_hsv->h = 60 * ((red - green) / delta + 4);
     }
   }
   
   /* S */
   if(cmax == 0)
   {
-    *s = 0;
+    pColor_hsv->s = 0;
   }
   else
   {
-    *s = delta / cmax;
+    pColor_hsv->s = delta / cmax;
   }
   
   /* V */
-  *v = cmax;
+  pColor_hsv->v = cmax;
 }
   
-void hsv2rgb(float h, float s, float v, uint8_t *r, uint8_t *g, uint8_t *b)
+// void hsv2rgb(float h, float s, float v, uint8_t *r, uint8_t *g, uint8_t *b)
+void hsv2rgb(tColor_HSV* pColor_hsv, tColor_RGB* pColor_rgb)
 {
-    int hi = ((int)h / 60) % 6;
-    float f = h * 1.0 / 60 - hi;
-    float p = v * (1 - s);
-    float q = v * (1 - f * s);
-    float t = v * (1- (1 - f) * s);
+    int hi = ((int)pColor_hsv->h / 60) % 6;
+    float f = pColor_hsv->h * 1.0 / 60 - hi;
+    float p = pColor_hsv->v * (1 - pColor_hsv->s);
+    float q = pColor_hsv->v * (1 - f * pColor_hsv->s);
+    float t = pColor_hsv->v * (1- (1 - f) * pColor_hsv->s);
     switch (hi){
         case 0:
-            *r = (uint8_t)(255 * v);
-            *g = (uint8_t)(255 * t);
-            *b = (uint8_t)(255 * p);
+            pColor_rgb->r = (uint8_t)(255 * pColor_hsv->v);
+            pColor_rgb->g = (uint8_t)(255 * t);
+            pColor_rgb->b = (uint8_t)(255 * p);
             break;
         case 1:
-            *r = (uint8_t)(255 * q);
-            *g = (uint8_t)(255 * v);
-            *b = (uint8_t)(255 * p);
+            pColor_rgb->r = (uint8_t)(255 * q);
+            pColor_rgb->g = (uint8_t)(255 * pColor_hsv->v);
+            pColor_rgb->b = (uint8_t)(255 * p);
             break;
         case 2:
-            *r = (uint8_t)(255 * p);
-            *g = (uint8_t)(255 * v);
-            *b = (uint8_t)(255 * t);
+            pColor_rgb->r = (uint8_t)(255 * p);
+            pColor_rgb->g = (uint8_t)(255 * pColor_hsv->v);
+            pColor_rgb->b = (uint8_t)(255 * t);
             break;
         case 3:
-            *r = (uint8_t)(255 * p);
-            *g = (uint8_t)(255 * q);
-            *b = (uint8_t)(255 * v);
+            pColor_rgb->r = (uint8_t)(255 * p);
+            pColor_rgb->g = (uint8_t)(255 * q);
+            pColor_rgb->b = (uint8_t)(255 * pColor_hsv->v);
             break;
         case 4:
-            *r = (uint8_t)(255 * t);
-            *g = (uint8_t)(255 * p);
-            *b = (uint8_t)(255 * v);
+            pColor_rgb->r = (uint8_t)(255 * t);
+            pColor_rgb->g = (uint8_t)(255 * p);
+            pColor_rgb->b = (uint8_t)(255 * pColor_hsv->v);
             break;
         case 5:
-            *r = (uint8_t)(255 * v);
-            *g = (uint8_t)(255 * p);
-            *b = (uint8_t)(255 * q);
+            pColor_rgb->r = (uint8_t)(255 * pColor_hsv->v);
+            pColor_rgb->g = (uint8_t)(255 * p);
+            pColor_rgb->b = (uint8_t)(255 * q);
             break;
     }
 }

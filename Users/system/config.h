@@ -13,7 +13,7 @@
 #include "LedSync.h"
 #include "timebase.h"
 
-// #define DEBUG
+#define DEBUG 1
 #define UARTREAD
 
 #define VER 0x10
@@ -25,7 +25,7 @@
      是否打开调试信息
 **********************************************************/
 // #define  BAUD_NUM                   96//384//1152
-#define  FUNC_UARTDBG_EN	        1//串口调试,烧芯片之前必须设置为[占560 byte]
+#define  FUNC_UARTDBG_EN	        0//串口调试,烧芯片之前必须设置为[占560 byte]
 
 #if FUNC_UARTDBG_EN
 #define DBG(str) Uart_PutString(str)

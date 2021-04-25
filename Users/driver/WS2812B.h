@@ -143,7 +143,7 @@
 #define	COLOR_GRAY							0x808080	//	灰色
 #define	COLOR_DIMGRAY						0x696969	//	暗淡的灰色
 #define	COLOR_BLACK							0x000000	//	纯黑
- 
+#define COLOR_AMARANTH                      0xFF0A78    //  粉红
 
 //声明功能函数
 void Ws2812b_Configuration(void);

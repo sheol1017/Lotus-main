@@ -19,6 +19,7 @@ static u8 MSG_FIFO = NO_MSG;
 static u8 InputNumCnt = 0;
 static u8 FolderNum = 0; //指定文件夹操作时的文件夹数目
 static u8 FileNum = 0;   //指定文件名操作时的文件名数目
+static bool bPaused=FALSE;
 
 u8 ucErrorStatus = 0;
 u8 FEEDBACK = 0; //是否需要反馈[=1:要应答][=0:不要应答]
@@ -67,8 +68,8 @@ const u8 key_table[12] = {
 //短按
 #define ADKEY_16KEY_MUSIC_SHORT            \
     /* - 0 -*/ MSG_MUSIC_SPECIAL_PLAY,     \
-        /* - 1 -*/ MSG_VOL_UP,             \
-        /* - 2 -*/ MSG_VOL_DOWN,           \
+        /* - 1 -*/ MSG_BRIGHTNESS_INC,     \
+        /* - 2 -*/ MSG_BRIGHTNESS_DEC,     \
         /* - 3 -*/ MSG_VOL_UP,             \
         /* - 4 -*/ MSG_MUSIC_SPECIAL_PLAY, \
         /* - 5 -*/ MSG_VOL_DOWN,           \
@@ -81,9 +82,9 @@ const u8 key_table[12] = {
 
 //长按
 #define ADKEY_16KEY_MUSIC_LONG          \
-    /* - 0 -*/ MSG_PLAYALL_OFF,         \
-        /* - 1 -*/ MSG_MUSIC_NEXT_FILE, \
-        /* - 2 -*/ MSG_MUSIC_PREV_FILE, \
+    /* - 0 -*/ MSG_MUSIC_PAUSE,         \
+        /* - 1 -*/ NO_MSG,              \
+        /* - 2 -*/ NO_MSG,              \
         /* - 3 -*/ MSG_MUSIC_NEXT_FILE, \
         /* - 4 -*/ MSG_MUSIC_PAUSE,     \
         /* - 5 -*/ MSG_MUSIC_PREV_FILE, \
@@ -711,8 +712,11 @@ void MSG_Task(void)
         DBG("MUSIC_PLAY\n");
         //RGB_Refresh(COLOR_GREEN, LED_Num);
         put_msg_lifo(MSG_VOL_INIT);
-        LS_Init();
         ColorLightStart();
+        if (bPaused)
+        {
+         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
+        }        
         SysReturnTime = SYSRETURNTIME;
         break;
         /*****************************************************
@@ -721,6 +725,8 @@ void MSG_Task(void)
     case MSG_MUSIC_PAUSE:
         Uart_SendCMD(UARTCMD_MUSIC_PAUSE, FEEDBACK, 0);
         DBG("MUSIC_PAUSE\n");
+        ColorLightoff();
+        bPaused = TRUE;
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PAUSE");
         SysReturnTime = SYSRETURNTIME;
@@ -783,17 +789,27 @@ void MSG_Task(void)
     case MSG_PLAYALL_OFF:
         Uart_SendCMD(UARTCMD_PLAYALL, FEEDBACK, 0);
         DBG("MSG_MUSIC_PREV_FILE\n");
-        ColorLightoff();
         SysReturnTime = SYSRETURNTIME;
         break;
-    /******************************************************
+        /******************************************************
+                          亮度调节
+         *****************************************************/
+    case MSG_BRIGHTNESS_INC:
+        Change_Brightness(TRUE);
+        break;
+    case MSG_BRIGHTNESS_DEC:
+        Change_Brightness(FALSE);
+        break;
+        /******************************************************
                           音量调节
          *****************************************************/
+
     case MSG_VOL_UP:
         input_vol++;
         input_vol++;
     case MSG_VOL_DOWN:
         input_vol--;
+
     case MSG_VOL_INIT:
         if (input_vol == 255)
         {
