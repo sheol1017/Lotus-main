@@ -4,6 +4,11 @@
 #include "stm8s_uart1.h"
 
 #define RESEND_MAX      5		  //最大重发次数
+#define MUTE_PORT GPIOB
+#define MUTE_PIN GPIO_PIN_0
+
+#define MP3_MUTE_ENABLE() GPIOB->ODR |= (uint8_t)GPIO_PIN_0
+#define MP3_MUTE_DISABLE() GPIOB->ODR &= (uint8_t)(~GPIO_PIN_0)
 /****************************************************************************************************
                                    参考测试指令
 
@@ -110,6 +115,7 @@ void Uart_communication(void);
 void Uart_ReadByte_RX_IRQ(void);
 
 void MP3_Init(void);
+void MP3_MUTE_INIT(void);
 void GoInitDevice(u8 Online) ;
 void GotoNextDevice(u8 device) ;
 void ChangeDevice(u8 dev);

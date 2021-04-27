@@ -3,9 +3,10 @@
  
 // #include "fy_includes.h"
 #include "stm8s.h"
+#include "config.h"
  
-#define LED_Num 10 
-#define LED_Max_Num 30 
+#define LED_Num 21 
+#define LED_Max_Num 21 
 /*ÑÕÉ«ºê¶¨Òå*/								/*R G B*/
 #define	COLOR_LIGHTPINK						0xFFB6C1	//	Ç³·Ûºì
 #define	COLOR_PINK							0xFFC0CB	//	·Ûºì
@@ -145,6 +146,14 @@
 #define	COLOR_BLACK							0x000000	//	´¿ºÚ
 #define COLOR_AMARANTH                      0xFF0A78    //  ·Ûºì
 
+
+#ifdef FORXUCHENG
+#define WS2812B_LED_PORT GPIOC
+#define WS2812B_LED_PIN GPIO_PIN_5
+#else
+#define WS2812B_LED_PORT GPIOB
+#define WS2812B_LED_PIN GPIO_PIN_0
+#endif // FORXUCHENG
 //ÉùÃ÷¹¦ÄÜº¯Êý
 void Ws2812b_Configuration(void);
 void Ws2812b_Init(void);

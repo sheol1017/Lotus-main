@@ -74,7 +74,8 @@ static void CLK_Config(void);
 ********************************************************************************/
 static void GPIO_Config()
 {
-  GPIO_Init(GPIOD, (GPIO_Pin_TypeDef)GPIO_PIN_2, GPIO_MODE_OUT_PP_HIGH_FAST); //debug
+  // GPIO_Init(GPIOD, (GPIO_Pin_TypeDef)GPIO_PIN_2, GPIO_MODE_OUT_PP_HIGH_FAST); //debug
+  MP3_MUTE_INIT();
 }
 
 /********************************************************************************
@@ -104,7 +105,7 @@ void main(void)
   CLK_Config();
 
   /* Watchdog Init -------------------------------------------*/
-  // IWDG_Initializes();
+  IWDG_Initializes();
 
   /* GPIO configuration ------------------------------------------*/
   GPIO_Config();
@@ -121,7 +122,7 @@ void main(void)
   while (MainEnable)
   {
 
-    // IWDG_ReloadCounter(); //喂狗(理论小于4ms内喂狗都不会复位，由于HSI有偏差，我们设定在xxxms喂狗一次)
+    IWDG_ReloadCounter(); //喂狗(理论小于4ms内喂狗都不会复位，由于HSI有偏差，我们设定在xxxms喂狗一次)
 
     TimeBase_HandleTimeBaseCouter(); // Timebase reset
 

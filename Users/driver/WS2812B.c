@@ -64,12 +64,12 @@
     _nop_();
 
 //引脚
-#define RGB_PIN_H() GPIOB->ODR |= (uint8_t)GPIO_PIN_0;
-#define RGB_PIN_L() GPIOB->ODR &= (uint8_t)(~GPIO_PIN_0)
+#define RGB_PIN_H() WS2812B_LED_PORT->ODR |= (uint8_t)WS2812B_LED_PIN;
+#define RGB_PIN_L() WS2812B_LED_PORT->ODR &= (uint8_t)(~WS2812B_LED_PIN)
 
 void Ws2812b_Configuration(void)
 {
-    GPIO_Init(GPIOB, (GPIO_Pin_TypeDef)GPIO_PIN_0, GPIO_MODE_OUT_PP_HIGH_FAST);
+    GPIO_Init(WS2812B_LED_PORT, (GPIO_Pin_TypeDef)WS2812B_LED_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
     RGB_PIN_L();
 }
 

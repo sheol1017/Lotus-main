@@ -14,5 +14,6 @@
         "adc.h": "c",
         "stm8s_it.h": "c",
         "LCD1602.C": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

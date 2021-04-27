@@ -15,14 +15,16 @@
 #include "config.h"
 
 /** Private define ------------------------------------------------------------*/
-#define MAX_LED_NUMBER 50u
+#define MAX_LED_NUMBER LED_Max_Num
+
 #define LIGHT_RATE 0.7
 #define BrightnessTable 1 * LIGHT_RATE *LIGHT_RATE *LIGHT_RATE *LIGHT_RATE *LIGHT_RATE, \
-                        1 * LIGHT_RATE *LIGHT_RATE *LIGHT_RATE *LIGHT_RATE , \
-                        1 * LIGHT_RATE *LIGHT_RATE *LIGHT_RATE ,             \
-                        1 * LIGHT_RATE *LIGHT_RATE ,                         \
-                        1 * LIGHT_RATE ,                                     \
-                        1  
+                        1 * LIGHT_RATE *LIGHT_RATE *LIGHT_RATE *LIGHT_RATE,             \
+                        1 * LIGHT_RATE *LIGHT_RATE *LIGHT_RATE,                         \
+                        1 * LIGHT_RATE *LIGHT_RATE,                                     \
+                        1 * LIGHT_RATE,                                                 \
+                        1
+#define DEFAUT_BRIGHT 1 * LIGHT_RATE *LIGHT_RATE *LIGHT_RATE
 /** Private typedef -----------------------------------------------------------*/
 typedef enum _tBrightnesslevel
 {

@@ -139,7 +139,7 @@ void DS10MS_CNT(void)
 	         +--------------------+
 *************************************************/
 		key_scan();
-// UartSend_Collide_Task();
+		UartSend_Collide_Task();
 #ifdef UARTREAD
 		Uart_communication();
 #endif // UARTREAD

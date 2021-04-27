@@ -324,8 +324,8 @@ void key_scan(void)
         }
     }
 
-    Put_u8(key_status);
-    Put_u8(back_last_key);
+    //Put_u8(key_status);
+    //Put_u8(back_last_key);
     music_msg_filter(key_status, back_last_key);
 }
 
@@ -359,6 +359,7 @@ void MSG_Task(void)
         RAM_Init();
         ////LCD1602_Init();
         DBG("MSG_RETURN_INIT\n");
+        put_msg_lifo(MSG_VOL_INIT);
         break;
         /*****************************************************
                           设备插入
@@ -701,21 +702,29 @@ void MSG_Task(void)
         *****************************************************/
     case MSG_MUSIC_PLAY:
         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
-        DBG("MUSIC_PLAY\n");
+        DBG("\nMUSIC_PLAY\n");
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PLAY");
         SysReturnTime = SYSRETURNTIME;
         break;
-
-    case MSG_MUSIC_SPECIAL_PLAY:
-        Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
-        DBG("MUSIC_PLAY\n");
-        //RGB_Refresh(COLOR_GREEN, LED_Num);
+    case MSG_MUSIC_LOOP_PLAY:
+        Uart_SendCMD(UARTCMD_LOOP_PLAY, FEEDBACK, 0);
+        DBG("\nMUSIC_LOOP_PLAY\n");
         put_msg_lifo(MSG_VOL_INIT);
+        //LCD1602_ClearLine(1);
+        //LCD1602_DispStr(1 , 0  , "MUSIC_PLAY");
+        SysReturnTime = SYSRETURNTIME;
+        break;
+    case MSG_MUSIC_SPECIAL_PLAY:
+        // Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);        
+        DBG("\n MUSIC_PLAY\n");
+        //RGB_Refresh(COLOR_GREEN, LED_Num);
+        put_msg_lifo(MSG_MUSIC_REPEAT);
         ColorLightStart();
+        MP3_MUTE_DISABLE();
         if (bPaused)
         {
-         Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
+         // need a repeat cmd;
         }        
         SysReturnTime = SYSRETURNTIME;
         break;
@@ -726,9 +735,21 @@ void MSG_Task(void)
         Uart_SendCMD(UARTCMD_MUSIC_PAUSE, FEEDBACK, 0);
         DBG("MUSIC_PAUSE\n");
         ColorLightoff();
+        MP3_MUTE_ENABLE();
         bPaused = TRUE;
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PAUSE");
+        SysReturnTime = SYSRETURNTIME;
+        break;
+
+        /*****************************************************
+                          重复曲
+        *****************************************************/
+    case MSG_MUSIC_REPEAT:
+        // Uart_SendCMD(UARTCMD_PREV_FILE, FEEDBACK, 0);
+        Uart_SendCMD(UARTCMD_NEXT_FILE, FEEDBACK, 0);        
+        DBG("\nMSG_MUSIC_REPEAT_FILE\n");
+        put_msg_lifo(MSG_MUSIC_LOOP_PLAY);
         SysReturnTime = SYSRETURNTIME;
         break;
         /*****************************************************
@@ -820,7 +841,8 @@ void MSG_Task(void)
             input_vol = MAX_MAIN_VOL;
         }
         Uart_SendCMD(UARTCMD_VOL_POINT, FEEDBACK, input_vol);
-
+        DBG("MSG_VOL_INIT\n");
+        
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "CUR VOL[  ]");
         SysReturnTime = SYSRETURNTIME;

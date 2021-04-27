@@ -13,8 +13,9 @@
 #include "LedSync.h"
 #include "timebase.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define UARTREAD
+#define FORXUCHENG 
 
 #define VER 0x10
 #define true TRUE 
@@ -40,9 +41,9 @@
 
 #define SENDLENTH 10    //发送数据总长度
 #define MAX_MAIN_VOL 30 //最大音量
-#define Middle_VOL 8 //初始音量
+#define Middle_VOL 15 //初始音量
 #define QUERYACKTIME 20
-#define SYSRETURNTIME 20
+#define SYSRETURNTIME 100 //10s reset
 
 /************************************************************************
           LED灯 --- 播放指示灯

@@ -194,7 +194,7 @@ static bool bLightBreathStart;
 static bool bLightIncrease = false;
 static bool bLightDecrease = false;
 static u8 Maxtime_bk;
-static float Brightcal = 1;
+static float Brightcal = DEFAUT_BRIGHT;
 const float BrightnessLevel[eBrightnessLevel_Max] = {BrightnessTable};
 static float k;
 /** export variables ----------------------------------------------------------*/
@@ -649,7 +649,7 @@ void ColorWave(void)
 
                 bLightDecrease = true;
                 bLightIncrease = false;
-                DBG("\n Increas ok\n");
+                // DBG("\n Increas ok\n");
                 count_breath = 0;
             }
         }

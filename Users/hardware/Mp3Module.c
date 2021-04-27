@@ -26,7 +26,7 @@ const u8 hex[] = {"0123456789ABCDEF"};
 
 void DoSum(u8 *Str, u8 len);
 void Uart_Task(u8 *pr);
-void MP3_Init(void);
+// void MP3_Init(void);
 
 /********************************************************************************************
  - 功能描述： 初始化串口
@@ -76,7 +76,11 @@ void MP3_Init(void)
     GPIO_Init(GPIOD, GPIO_PIN_6, GPIO_MODE_IN_PU_NO_IT);
 }
 
-
+void MP3_MUTE_INIT(void)
+{
+    GPIO_Init(MUTE_PORT, MUTE_PIN, GPIO_MODE_OUT_PP_HIGH_SLOW);
+    
+}
 /********************************************************************************************
  - 功能描述： 串口发送一个字节
  - 隶属模块： 外部
@@ -137,7 +141,7 @@ void Uart_PutChar(u8 dat)
 /*****************************************************************************************************
  - 功能描述： 串口发送数据
  - 隶属模块： 内部 
- - 参数说明： 
+ - 参数说明： 长度，是否重发，溢出时间
  - 返回说明： 
  - 注：无     
 *****************************************************************************************************/
@@ -278,7 +282,7 @@ void UartSend_Collide_Task(void)
             Resend_Flag = 0;
             return;
         }
-        SendCmd(ResendDataLen, 1, 25); //重发数据
+        SendCmd(SendDataLen, 1, 25); //重发数据
     }
 }
 /********************************************************************************************
@@ -496,7 +500,8 @@ void Uart_SendCMD(u8 CMD, u8 feedback, u16 dat)
     Send_buf[4] = (u8)(dat >> 8); //datah
     Send_buf[5] = (u8)(dat);      //datal
     DoSum(&Send_buf[0], 6);       //校验
-    SendCmd(8, 1, 30);            //发送此帧数据
+    // SendCmd(8, 1, 30);            //发送此帧数据
+    SendCmd(8, 1, 30);            //发送此帧需要重发数据
     UartRecvACK = 3;              //设定等待应答的时间[300ms]
 }
 
