@@ -103,7 +103,7 @@ typedef struct _tColocycle
 //四声间隔
 #define INDEX_AMITUOFOWAITTIME \
     {                          \
-        3u, 2u, 2u, 3u         \
+        5u, 2u, 2u, 3u         \
     }
 // 两个四声间隔
 #define INDEX_2_AMITUOFOWAITTIME \
@@ -111,10 +111,10 @@ typedef struct _tColocycle
         5u, 2u                   \
     }
 // 每个光的间隔
-#define index_white_dely_time 5u
-#define index_red_dely_time 5u
-#define index_blue_dely_time 3u
-#define index_glod_dely_time 3u
+#define index_white_dely_time 12u
+#define index_red_dely_time 10u
+#define index_blue_dely_time 8u
+#define index_glod_dely_time 8u
 #define index_green_dely_time 4u
 #define LOOPNOTFINISH FALSE
 

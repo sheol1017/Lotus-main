@@ -5,8 +5,8 @@
 #include "stm8s.h"
 #include "config.h"
  
-#define LED_Num 21 
-#define LED_Max_Num 21 
+#define LED_Num 30 
+#define LED_Max_Num LED_Num 
 /*ÑÕÉ«ºê¶¨Òå*/								/*R G B*/
 #define	COLOR_LIGHTPINK						0xFFB6C1	//	Ç³·Ûºì
 #define	COLOR_PINK							0xFFC0CB	//	·Ûºì

@@ -701,7 +701,7 @@ void MSG_Task(void)
                           ²¥·Å
         *****************************************************/
     case MSG_MUSIC_PLAY:
-        Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);
+        Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);        
         DBG("\nMUSIC_PLAY\n");
         //LCD1602_ClearLine(1);
         //LCD1602_DispStr(1 , 0  , "MUSIC_PLAY");
@@ -718,6 +718,7 @@ void MSG_Task(void)
     case MSG_MUSIC_SPECIAL_PLAY:
         // Uart_SendCMD(UARTCMD_MUSIC_PLAY, FEEDBACK, 0);        
         DBG("\n MUSIC_PLAY\n");
+        MP3_HW_NextMusic();
         //RGB_Refresh(COLOR_GREEN, LED_Num);
         put_msg_lifo(MSG_MUSIC_REPEAT);
         ColorLightStart();
@@ -747,7 +748,7 @@ void MSG_Task(void)
         *****************************************************/
     case MSG_MUSIC_REPEAT:
         // Uart_SendCMD(UARTCMD_PREV_FILE, FEEDBACK, 0);
-        Uart_SendCMD(UARTCMD_NEXT_FILE, FEEDBACK, 0);        
+        // Uart_SendCMD(UARTCMD_NEXT_FILE, FEEDBACK, 0);        
         DBG("\nMSG_MUSIC_REPEAT_FILE\n");
         put_msg_lifo(MSG_MUSIC_LOOP_PLAY);
         SysReturnTime = SYSRETURNTIME;

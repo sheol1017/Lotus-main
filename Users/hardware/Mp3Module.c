@@ -21,6 +21,7 @@ static u8 Recv_buf[SENDLENTH] = {0};
 
 static u8 SendDataLen = 0;
 static u8 ResendDataLen = 0;
+static u8 MP3_HWCONTROL_COUNT;
 
 const u8 hex[] = {"0123456789ABCDEF"};
 
@@ -79,7 +80,32 @@ void MP3_Init(void)
 void MP3_MUTE_INIT(void)
 {
     GPIO_Init(MUTE_PORT, MUTE_PIN, GPIO_MODE_OUT_PP_HIGH_SLOW);
+    GPIO_Init(MP3_HWCONTROL_PORT, MP3_HWCONTROL_PIN, GPIO_MODE_OUT_PP_HIGH_SLOW);
     
+}
+
+
+void MP3_HW_NextMusic(void)
+{
+
+    MP3_HWCONTROL_ENABLE();
+    MP3_HWCONTROL_COUNT = MP3_HWCONTROL_TIME;
+    // MP3_HWCONTROL_DISABLE();
+}
+
+
+//100ms run
+void MP3_HWNextMusic_handle(void)
+{
+   
+    if(0== MP3_HWCONTROL_COUNT)
+    {
+         MP3_HWCONTROL_DISABLE();
+    }
+    else
+    {
+        MP3_HWCONTROL_COUNT--;
+    }
 }
 /********************************************************************************************
  - 功能描述： 串口发送一个字节

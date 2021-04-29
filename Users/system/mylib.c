@@ -175,6 +175,7 @@ void DS100MS_CNT(void)
 		IWDG_ReloadCounter(); //FEED_WDT() ; //喂狗
 							  // Indicator_Scan();  //播放指示灯的控制
 		Time_Task();
+		MP3_HWNextMusic_handle();
 		if (++counter100ms == 5)
 		{
 			counter100ms = 0;

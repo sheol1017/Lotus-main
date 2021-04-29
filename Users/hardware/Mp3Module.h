@@ -7,8 +7,15 @@
 #define MUTE_PORT GPIOB
 #define MUTE_PIN GPIO_PIN_0
 
-#define MP3_MUTE_ENABLE() GPIOB->ODR |= (uint8_t)GPIO_PIN_0
-#define MP3_MUTE_DISABLE() GPIOB->ODR &= (uint8_t)(~GPIO_PIN_0)
+#define MP3_MUTE_ENABLE() MUTE_PORT->ODR |= (uint8_t)MUTE_PIN
+#define MP3_MUTE_DISABLE() MUTE_PORT->ODR &= (uint8_t)(~MUTE_PIN)
+
+#define MP3_HWCONTROL_PORT GPIOA
+#define MP3_HWCONTROL_PIN GPIO_PIN_2
+#define MP3_HWCONTROL_TIME 20; //10*100ms
+
+#define MP3_HWCONTROL_DISABLE() MP3_HWCONTROL_PORT->ODR |= (uint8_t)MP3_HWCONTROL_PIN
+#define MP3_HWCONTROL_ENABLE() MP3_HWCONTROL_PORT->ODR &= (uint8_t)(~MP3_HWCONTROL_PIN)
 /****************************************************************************************************
                                    ≤Œøº≤‚ ‘÷∏¡Ó
 
@@ -116,6 +123,8 @@ void Uart_ReadByte_RX_IRQ(void);
 
 void MP3_Init(void);
 void MP3_MUTE_INIT(void);
+void MP3_HW_NextMusic(void);
+void MP3_HWNextMusic_handle(void);
 void GoInitDevice(u8 Online) ;
 void GotoNextDevice(u8 device) ;
 void ChangeDevice(u8 dev);
